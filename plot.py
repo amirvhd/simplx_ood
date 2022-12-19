@@ -2,7 +2,6 @@ import numpy
 import pickle as pkl
 import matplotlib.pyplot as plt
 
-
 def main():
     with open('./experiments/results/cifar/outlier/simplex_cifar_cv0.pkl', 'rb') as f:
         data_base = pkl.load(f)
