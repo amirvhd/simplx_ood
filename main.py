@@ -64,13 +64,13 @@ def load_mnist(
 
 
 def load_svhn(
-        batch_size: int, train: bool, subset_size=None, shuffle: bool = True
+        batch_size: int, split= "test", subset_size=None, shuffle: bool = True
 ) -> DataLoader:
     mean = (0.4376821, 0.4437697, 0.47280442)
     std = (0.19803012, 0.20101562, 0.19703614)
-    dataset = torchvision.datasets.MNIST(
+    dataset = torchvision.datasets.SVHN(
         "~/DATA2/",
-        train=train,
+        split=split,
         download=False,
         transform=torchvision.transforms.Compose(
             [
