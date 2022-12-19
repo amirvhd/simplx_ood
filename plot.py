@@ -3,7 +3,7 @@ import pickle as pkl
 import matplotlib.pyplot as plt
 
 
-def manin():
+def main():
     with open('experiments/results/mnist/outlier/simplex_cifar_cv0.pkl', 'rb') as f:
         data_base = pkl.load(f)
     with open('experiments/results/mnist/outlier_sn/simplex_cifar_cv0.pkl', 'rb') as f:
@@ -25,3 +25,6 @@ def manin():
     # plt.title("CIFAR100-ood-detection")
     # plt.xticks([])
     # plt.yticks([])
+if __name__ == "__main__":
+
+    main()
