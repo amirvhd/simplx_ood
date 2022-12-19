@@ -56,12 +56,12 @@ class WideBasic(nn.Module):
 class WideResNet(nn.Module):
     def __init__(
         self,
-        input_size,
-        spectral_conv,
-        spectral_bn,
+        input_size=32,
+        spectral_conv=False,
+        spectral_bn=False,
         depth=28,
         widen_factor=10,
-        num_classes=None,
+        num_classes=10,
         dropout_rate=0.3,
         coeff=3,
         n_power_iterations=1,
