@@ -620,7 +620,7 @@ def outlier_detection(
     # test_latent_reps1 = classifier1.latent_representation(test_features).detach()
     # corpus_latent_reps2 = classifier2.latent_representation(corpus_features).detach()
     # test_latent_reps2 = classifier2.latent_representation(test_features).detach()
-    corpus_loader = load_cifar10(batch_size=50000, train=True)
+    corpus_loader = load_cifar10(batch_size=10000, train=True)
     cifar10_test_loader = load_cifar10(batch_size=10000, train=False)
     cifar100_test_loader = load_cifar100(batch_size=10000, train=True)
     corpus_examples = enumerate(corpus_loader)
