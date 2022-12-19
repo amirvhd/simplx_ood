@@ -63,6 +63,29 @@ def load_mnist(
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
 
+def load_svhn(
+        batch_size: int, train: bool, subset_size=None, shuffle: bool = True
+) -> DataLoader:
+    mean = (0.4376821, 0.4437697, 0.47280442)
+    std = (0.19803012, 0.20101562, 0.19703614)
+    dataset = torchvision.datasets.MNIST(
+        "~/DATA2/",
+        train=train,
+        download=False,
+        transform=torchvision.transforms.Compose(
+            [
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize(mean, std),
+            ]
+        ),
+    )
+    if subset_size:
+        dataset = torch.utils.data.Subset(
+            dataset, torch.randperm(len(dataset))[:subset_size]
+        )
+    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+
+
 def load_cifar10(
         batch_size: int, train: bool, subset_size=None, shuffle: bool = True
 ) -> DataLoader:
@@ -606,6 +629,7 @@ def outlier_detection(
     corpus_loader = load_cifar10(batch_size=1000, train=True)
     cifar10_test_loader = load_cifar10(batch_size=1000, train=False)
     cifar100_test_loader = load_cifar100(batch_size=1000, train=False)
+    svhn_test_loader = load_svhn(batch_size=1000, train=False)
     corpus_latent_reps1 = []
     corpus_latent_reps2 = []
     corpus_features = []
@@ -642,9 +666,27 @@ def outlier_detection(
     cifar100_test_features = torch.cat(cifar100_test_features, dim=0).squeeze(0).to(device).detach()
     cifar100_test_latent_reps1 = torch.cat(cifar100_test_latent_reps1, dim=0).squeeze(0).to(device).detach()
     cifar100_test_latent_reps2 = torch.cat(cifar100_test_latent_reps2, dim=0).squeeze(0).to(device).detach()
-    test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, cifar100_test_latent_reps1], dim=0)
-    test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, cifar100_test_latent_reps2], dim=0)
-    test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
+
+    svhn_test_features = []
+    svhn_test_latent_reps1 = []
+    svhn_test_latent_reps2 = []
+    for i, (svhn_test_feature, _) in enumerate(svhn_test_loader):
+        svhn_test_features.append(svhn_test_feature)
+        svhn_test_latent_reps1.append(
+            classifier1.latent_representation(svhn_test_feature.to(device).detach()).detach())
+        svhn_test_latent_reps2.append(
+            classifier2.latent_representation(svhn_test_feature.to(device).detach()).detach())
+    svhn_test_features = torch.cat(svhn_test_features, dim=0).squeeze(0).to(device).detach()
+    svhn_test_latent_reps1 = torch.cat(svhn_test_latent_reps1, dim=0).squeeze(0).to(device).detach()
+    svhn_test_latent_reps2 = torch.cat(svhn_test_latent_reps2, dim=0).squeeze(0).to(device).detach()
+
+    # test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, cifar100_test_latent_reps1], dim=0)
+    # test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, cifar100_test_latent_reps2], dim=0)
+    # test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
+
+    test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, svhn_test_latent_reps1], dim=0)
+    test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, svhn_test_latent_reps2], dim=0)
+    test_features = torch.cat([cifar10_test_features, svhn_test_features], dim=0)
 
     # Fit corpus:
     simplex1 = Simplex(
@@ -657,7 +699,7 @@ def outlier_detection(
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path1 / f"simplex_cifar_cv{cv}.pkl"
+    explainer_path = save_path1 / f"simplex_svhn_cv{cv}.pkl"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex1, f)
@@ -671,7 +713,7 @@ def outlier_detection(
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path2 / f"simplex_cifar_cv{cv}.pkl"
+    explainer_path = save_path2 / f"simplex_svhn_cv{cv}.pkl"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex2, f)
