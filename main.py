@@ -629,7 +629,7 @@ def outlier_detection(
     corpus_loader = load_cifar10(batch_size=1000, train=True)
     cifar10_test_loader = load_cifar10(batch_size=1000, train=False)
     cifar100_test_loader = load_cifar100(batch_size=1000, train=False)
-    svhn_test_loader = load_svhn(batch_size=1000, train=False)
+    svhn_test_loader = load_svhn(batch_size=1000,split="test")
     corpus_latent_reps1 = []
     corpus_latent_reps2 = []
     corpus_features = []
