@@ -4,9 +4,10 @@ import os
 import pickle as pkl
 import time
 from pathlib import Path
-
+import numpy
 import captum.attr
 import matplotlib.pyplot as plt
+import numpy
 import numpy as np
 import pandas as pd
 import pytorch_influence_functions as ptif
@@ -632,6 +633,7 @@ def outlier_detection(
         # corpus_examples = enumerate(corpus_loader)
         # batch_id_corpus, (corpus_features, corpus_target) = next(corpus_examples)
         corpus_features.append(corpus_feature)
+    corpus_features = numpy.array(corpus_features)
     corpus_features = torch.tensor(corpus_features).to(device).detach()
 
     # cifar10_test_examples = enumerate(cifar10_test_loader)
