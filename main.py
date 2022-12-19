@@ -42,16 +42,62 @@ class MNISTSubset(Dataset):
 
 
 def load_mnist(
-    batch_size: int, train: bool, subset_size=None, shuffle: bool = True
+        batch_size: int, train: bool, subset_size=None, shuffle: bool = True
 ) -> DataLoader:
     dataset = torchvision.datasets.MNIST(
-        "./data/",
+        "~/DATA2/",
         train=train,
-        download=True,
+        download=False,
         transform=torchvision.transforms.Compose(
             [
                 torchvision.transforms.ToTensor(),
                 torchvision.transforms.Normalize((0.1307,), (0.3081,)),
+            ]
+        ),
+    )
+    if subset_size:
+        dataset = torch.utils.data.Subset(
+            dataset, torch.randperm(len(dataset))[:subset_size]
+        )
+    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+
+
+def load_cifar10(
+        batch_size: int, train: bool, subset_size=None, shuffle: bool = True
+) -> DataLoader:
+    mean = (0.4914, 0.4822, 0.4465)
+    std = (0.2023, 0.1994, 0.2010)
+    dataset = torchvision.datasets.CIFAR10(
+        "~/DATA2/",
+        train=train,
+        download=False,
+        transform=torchvision.transforms.Compose(
+            [
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize(mean, std),
+            ]
+        ),
+    )
+    if subset_size:
+        dataset = torch.utils.data.Subset(
+            dataset, torch.randperm(len(dataset))[:subset_size]
+        )
+    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+
+
+def load_cifar100(
+        batch_size: int, train: bool, subset_size=None, shuffle: bool = True
+) -> DataLoader:
+    mean = (0.5071, 0.4867, 0.4408)
+    std = (0.2675, 0.2565, 0.2761)
+    dataset = torchvision.datasets.CIFAR100(
+        "~/DATA2/",
+        train,
+        download=False,
+        transform=torchvision.transforms.Compose(
+            [
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize(mean, std),
             ]
         ),
     )
@@ -82,17 +128,17 @@ def load_emnist(batch_size: int, train: bool) -> DataLoader:
 
 
 def train_model(
-    save_path: Path,
-    device: torch.device,
-    n_epoch: int = 6,
-    batch_size_train: int = 64,
-    batch_size_test: int = 1000,
-    random_seed: int = 42,
-    learning_rate: float = 0.01,
-    momentum: float = 0.5,
-    log_interval: int = 100,
-    model_reg_factor: float = 0.01,
-    cv: int = 0,
+        save_path: Path,
+        device: torch.device,
+        n_epoch: int = 6,
+        batch_size_train: int = 64,
+        batch_size_test: int = 1000,
+        random_seed: int = 42,
+        learning_rate: float = 0.01,
+        momentum: float = 0.5,
+        log_interval: int = 100,
+        model_reg_factor: float = 0.01,
+        cv: int = 0,
 ) -> MnistClassifier:
     torch.random.manual_seed(random_seed + cv)
     torch.backends.cudnn.enabled = False
@@ -174,18 +220,18 @@ def train_model(
 
 
 def fit_explainers(
-    device: torch.device,
-    explainers_name: list,
-    save_path: Path,
-    corpus_size: int = 1000,
-    test_size: int = 100,
-    n_epoch: int = 10000,
-    random_seed: int = 42,
-    n_keep: int = 5,
-    reg_factor_init: float = 0.1,
-    reg_factor_final: float = 100,
-    cv: int = 0,
-    train_only: bool = False,
+        device: torch.device,
+        explainers_name: list,
+        save_path: Path,
+        corpus_size: int = 1000,
+        test_size: int = 100,
+        n_epoch: int = 10000,
+        random_seed: int = 42,
+        n_keep: int = 5,
+        reg_factor_init: float = 0.1,
+        reg_factor_final: float = 100,
+        cv: int = 0,
+        train_only: bool = False,
 ) -> list:
     torch.random.manual_seed(random_seed + cv)
     explainers = []
@@ -266,7 +312,7 @@ def fit_explainers(
 
 
 def fit_representer(
-    model_reg_factor: float, load_path: Path, cv: int = 0
+        model_reg_factor: float, load_path: Path, cv: int = 0
 ) -> Representer:
     # Fit the representer explainer (this is only makes sense by using the whole corpus)
     corpus_data_path = os.path.join(load_path, f"corpus_data_cv{cv}.pkl")
@@ -290,18 +336,18 @@ def fit_representer(
 
 
 def approximation_quality(
-    n_keep_list: list,
-    cv: int = 0,
-    random_seed: int = 42,
-    model_reg_factor=0.1,
-    save_path: str = "experiments/results/mnist/quality/",
-    train_only=False,
+        n_keep_list: list,
+        cv: int = 0,
+        random_seed: int = 42,
+        model_reg_factor=0.1,
+        save_path: str = "experiments/results/mnist/quality/",
+        train_only=False,
 ) -> None:
     print(
         100 * "-"
         + "\n"
         + "Welcome in the approximation quality experiment for MNIST. \n"
-        f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
+          f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     explainers_name = ["simplex", "nn_uniform", "nn_dist", "representer"]
@@ -375,16 +421,16 @@ def approximation_quality(
 
 
 def influence_function(
-    n_keep_list: list,
-    cv: int = 0,
-    random_seed: int = 42,
-    save_path: str = "experiments/results/mnist/influence/",
-    corpus_size: int = 1000,
-    test_size: int = 100,
+        n_keep_list: list,
+        cv: int = 0,
+        random_seed: int = 42,
+        save_path: str = "experiments/results/mnist/influence/",
+        corpus_size: int = 1000,
+        test_size: int = 100,
 ) -> None:
     print(
         100 * "-" + "\n" + "Welcome in the influence function computation for MNIST. \n"
-        f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
+                           f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
     )
     device = torch.device(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
     torch.random.manual_seed(random_seed + cv)
@@ -432,7 +478,7 @@ def influence_function(
     test_latent_reps = np.zeros((test_size, corpus_latent_reps.shape[-1]))
     for batch_id, batch in enumerate(test_loader):
         test_latent_reps[
-            batch_id * len(batch[0]) : (batch_id + 1) * len(batch[0]), :
+        batch_id * len(batch[0]): (batch_id + 1) * len(batch[0]), :
         ] = (
             classifier.latent_representation(batch[0].to(device)).detach().cpu().numpy()
         )
@@ -466,7 +512,7 @@ def influence_function(
             )
             weights_batch = simplex.weights.cpu().numpy()
             weights[
-                batch_id * len(weights_batch) : (batch_id + 1) * len(weights_batch), :
+            batch_id * len(weights_batch): (batch_id + 1) * len(weights_batch), :
             ] = weights_batch
 
         with open(save_path / f"simplex_weights_cv{cv}_n{n_keep}.pkl", "wb") as f:
@@ -490,10 +536,10 @@ def influence_function(
 
 
 def outlier_detection(
-    cv: int = 0,
-    random_seed: int = 42,
-    save_path: str = "experiments/results/mnist/outlier_sn/",
-    train: bool = True,
+        cv: int = 0,
+        random_seed: int = 42,
+        save_path: str = "experiments/results/cifar/outlier/",
+        train: bool = False,
 ) -> None:
     torch.random.manual_seed(random_seed + cv)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -502,7 +548,7 @@ def outlier_detection(
 
     print(
         100 * "-" + "\n" + "Welcome in the outlier detection experiment for MNIST. \n"
-        f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
+                           f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
     )
     current_path = Path.cwd()
     save_path = current_path / save_path
@@ -524,80 +570,139 @@ def outlier_detection(
 
     # Load the model
     # classifier = MnistClassifier()
-    classifier = WideResNet()
-
-    classifier.load_state_dict(torch.load(os.path.join(save_path, f"model_cv{cv}.pth")))
-    classifier.to(device)
-    classifier.eval()
+    save_path1 = current_path / "experiments/results/cifar/outlier/"
+    classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
+    # classifier1.load_state_dict(torch.load(os.path.join(save_path1, f"model_cv{cv}.pth")))
+    new_state_dict = {}
+    state_dict = torch.load(os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint.ckpt"), map_location=torch.device('cpu'))[
+        "state_dict"]
+    for k, v in state_dict.items():
+        k = k.replace("model.", "")
+        new_state_dict[k] = v
+    state_dict = new_state_dict
+    classifier1.load_state_dict(state_dict)
+    classifier1.to(device)
+    classifier1.eval()
+    save_path2 = current_path / "experiments/results/cifar/outlier_sn/"
+    new_state_dict = {}
+    state_dict = torch.load(os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v1.ckpt"), map_location=torch.device('cpu'))[
+        "state_dict"]
+    for k, v in state_dict.items():
+        k = k.replace("model.", "")
+        new_state_dict[k] = v
+    state_dict = new_state_dict
+    classifier2 = WideResNet(spectral_conv=True, spectral_bn=True)
+    # classifier2.load_state_dict(torch.load(os.path.join(save_path2, f"model_cv{cv}.pth")))
+    classifier2.load_state_dict(state_dict)
+    classifier2.to(device)
+    classifier2.eval()
 
     # Load data:
-    corpus_loader = load_mnist(batch_size=1000, train=True)
-    mnist_test_loader = load_mnist(batch_size=100, train=False)
-    emnist_test_loader = load_emnist(batch_size=100, train=True)
+    # corpus_loader = load_mnist(batch_size=1000, train=True)
+    # mnist_test_loader = load_mnist(batch_size=100, train=False)
+    # emnist_test_loader = load_emnist(batch_size=100, train=True)
+    # corpus_examples = enumerate(corpus_loader)
+    # batch_id_corpus, (corpus_features, corpus_target) = next(corpus_examples)
+    # corpus_features = corpus_features.to(device).detach()
+    # mnist_test_examples = enumerate(mnist_test_loader)
+    # batch_id_test_mnist, (mnist_test_features, mnist_test_target) = next(
+    #     mnist_test_examples
+    # )
+    # mnist_test_features = mnist_test_features.to(device).detach()
+    # emnist_test_examples = enumerate(emnist_test_loader)
+    # batch_id_test_emnist, (emnist_test_features, emnist_test_target) = next(
+    #     emnist_test_examples
+    # )
+    # emnist_test_features = emnist_test_features.to(device).detach()
+    # test_features = torch.cat([mnist_test_features, emnist_test_features], dim=0)
+    #
+    # corpus_latent_reps1 = classifier1.latent_representation(corpus_features).detach()
+    # test_latent_reps1 = classifier1.latent_representation(test_features).detach()
+    # corpus_latent_reps2 = classifier2.latent_representation(corpus_features).detach()
+    # test_latent_reps2 = classifier2.latent_representation(test_features).detach()
+    corpus_loader = load_cifar10(batch_size=1000, train=True)
+    cifar10_test_loader = load_cifar10(batch_size=1000, train=False)
+    cifar100_test_loader = load_cifar100(batch_size=1000, train=True)
     corpus_examples = enumerate(corpus_loader)
     batch_id_corpus, (corpus_features, corpus_target) = next(corpus_examples)
     corpus_features = corpus_features.to(device).detach()
-    mnist_test_examples = enumerate(mnist_test_loader)
-    batch_id_test_mnist, (mnist_test_features, mnist_test_target) = next(
-        mnist_test_examples
+    cifar10_test_examples = enumerate(cifar10_test_loader)
+    batch_id_test_mnist, (cifar10_test_features, cifar10_test_target) = next(
+        cifar10_test_examples
     )
-    mnist_test_features = mnist_test_features.to(device).detach()
-    emnist_test_examples = enumerate(emnist_test_loader)
-    batch_id_test_emnist, (emnist_test_features, emnist_test_target) = next(
-        emnist_test_examples
+    cifar10_test_features = cifar10_test_features.to(device).detach()
+    cifar100_test_examples = enumerate(cifar100_test_loader)
+    batch_id_test_cifar100, (cifar100_test_features, cifar100_test_target) = next(
+        cifar100_test_examples
     )
-    emnist_test_features = emnist_test_features.to(device).detach()
-    test_features = torch.cat([mnist_test_features, emnist_test_features], dim=0)
-    corpus_latent_reps = classifier.latent_representation(corpus_features).detach()
-    test_latent_reps = classifier.latent_representation(test_features).detach()
+    cifar100_test_features = cifar100_test_features.to(device).detach()
+    test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
 
+    corpus_latent_reps1 = classifier1.latent_representation(corpus_features).detach()
+    test_latent_reps1 = classifier1.latent_representation(test_features).detach()
+    corpus_latent_reps2 = classifier2.latent_representation(corpus_features).detach()
+    test_latent_reps2 = classifier2.latent_representation(test_features).detach()
     # Fit corpus:
-    simplex = Simplex(
-        corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps
+    simplex1 = Simplex(
+        corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps1
     )
-    simplex.fit(
+    simplex1.fit(
         test_examples=test_features,
-        test_latent_reps=test_latent_reps,
+        test_latent_reps=test_latent_reps1,
         n_epoch=n_epoch_simplex,
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path / f"simplex_cv{cv}.pkl"
+    explainer_path = save_path1 / f"simplex_cifar_cv{cv}.pkl"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
-        pkl.dump(simplex, f)
-    nn_uniform = NearNeighLatent(
-        corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps
+        pkl.dump(simplex1, f)
+    simplex2 = Simplex(
+        corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps2
     )
-    nn_uniform.fit(test_features, test_latent_reps, n_keep=K)
-    nn_dist = NearNeighLatent(
-        corpus_examples=corpus_features,
-        corpus_latent_reps=corpus_latent_reps,
-        weights_type="distance",
+    simplex2.fit(
+        test_examples=test_features,
+        test_latent_reps=test_latent_reps2,
+        n_epoch=n_epoch_simplex,
+        reg_factor=0,
+        n_keep=corpus_features.shape[0],
     )
-    nn_dist.fit(test_features, test_latent_reps, n_keep=K)
-    explainer_path = save_path / f"nn_dist_cv{cv}.pkl"
+    explainer_path = save_path2 / f"simplex_cifar_cv{cv}.pkl"
     with open(explainer_path, "wb") as f:
-        print(f"Saving nn_dist decomposition in {explainer_path}.")
-        pkl.dump(nn_dist, f)
-    explainer_path = save_path / f"nn_uniform_cv{cv}.pkl"
-    with open(explainer_path, "wb") as f:
-        print(f"Saving nn_uniform decomposition in {explainer_path}.")
-        pkl.dump(nn_uniform, f)
+        print(f"Saving simplex decomposition in {explainer_path}.")
+        pkl.dump(simplex2, f)
+    # nn_uniform = NearNeighLatent(
+    #     corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps
+    # )
+    # nn_uniform.fit(test_features, test_latent_reps, n_keep=K)
+    # nn_dist = NearNeighLatent(
+    #     corpus_examples=corpus_features,
+    #     corpus_latent_reps=corpus_latent_reps,
+    #     weights_type="distance",
+    # )
+    # nn_dist.fit(test_features, test_latent_reps, n_keep=K)
+    # explainer_path = save_path / f"nn_dist_cv{cv}.pkl"
+    # with open(explainer_path, "wb") as f:
+    #     print(f"Saving nn_dist decomposition in {explainer_path}.")
+    #     pkl.dump(nn_dist, f)
+    # explainer_path = save_path / f"nn_uniform_cv{cv}.pkl"
+    # with open(explainer_path, "wb") as f:
+    #     print(f"Saving nn_uniform decomposition in {explainer_path}.")
+    #     pkl.dump(nn_uniform, f)
 
 
 def jacobian_corruption(
-    random_seed=42,
-    save_path="experiments/results/mnist/jacobian_corruption/",
-    corpus_size=500,
-    test_size=500,
-    n_bins=100,
-    batch_size=50,
-    train: bool = True,
+        random_seed=42,
+        save_path="experiments/results/mnist/jacobian_corruption/",
+        corpus_size=500,
+        test_size=500,
+        n_bins=100,
+        batch_size=50,
+        train: bool = True,
 ) -> None:
     print(
         100 * "-" + "\n" + "Welcome in the Jacobian Projection check for MNIST. \n"
-        f"Settings: random_seed = {random_seed} .\n" + 100 * "-"
+                           f"Settings: random_seed = {random_seed} .\n" + 100 * "-"
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -666,7 +771,7 @@ def jacobian_corruption(
             test_latent = classifier.latent_representation(test_input).detach()
             baseline_latents = classifier.latent_representation(baseline_inputs)
             latent_shift = test_latent - baseline_latents
-            latent_shift_sqrdnorm = torch.sum(latent_shift**2, dim=-1, keepdim=True)
+            latent_shift_sqrdnorm = torch.sum(latent_shift ** 2, dim=-1, keepdim=True)
             input_grad = torch.zeros(corpus_inputs.shape, device=corpus_inputs.device)
             for n in range(1, n_bins + 1):
                 t = n / n_bins
@@ -699,22 +804,22 @@ def jacobian_corruption(
                 mask_ig = torch.zeros(corpus_inputs.shape, device=device)
                 for k in range(n_pert):
                     mask_jp[
-                        :, 0, top_pixels_jp[:, k] // 28, top_pixels_jp[:, k] % 28
+                    :, 0, top_pixels_jp[:, k] // 28, top_pixels_jp[:, k] % 28
                     ] = 1
                     mask_ig[
-                        :, 0, top_pixels_ig[:, k] // 28, top_pixels_ig[:, k] % 28
+                    :, 0, top_pixels_ig[:, k] // 28, top_pixels_ig[:, k] % 28
                     ] = 1
                 corpus_inputs_pert_jp = (
-                    mask_jp * baseline_inputs + (1 - mask_jp) * corpus_inputs
+                        mask_jp * baseline_inputs + (1 - mask_jp) * corpus_inputs
                 )
                 corpus_inputs_pert_ig = (
-                    mask_ig * baseline_inputs + (1 - mask_ig) * corpus_inputs
+                        mask_ig * baseline_inputs + (1 - mask_ig) * corpus_inputs
                 )
                 Corpus_inputs_pert_jp[
-                    pert_id, lower_id:higher_id
+                pert_id, lower_id:higher_id
                 ] = corpus_inputs_pert_jp
                 Corpus_inputs_pert_ig[
-                    pert_id, lower_id:higher_id
+                pert_id, lower_id:higher_id
                 ] = corpus_inputs_pert_ig
 
         print("Now fitting the uncorrupted SimplEx")
@@ -824,7 +929,7 @@ def timing_experiment() -> None:
                 baseline_latents = classifier.latent_representation(baseline_inputs)
                 latent_shift = test_latent - baseline_latents
                 latent_shift_sqrdnorm = torch.sum(
-                    latent_shift**2, dim=-1, keepdim=True
+                    latent_shift ** 2, dim=-1, keepdim=True
                 )
                 input_grad = torch.zeros(
                     corpus_inputs.shape, device=corpus_inputs.device

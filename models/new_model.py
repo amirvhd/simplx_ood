@@ -3,23 +3,22 @@
 
 import torch.nn as nn
 import torch.nn.functional as F
-import torch
+
 from models.spectral_batchnorm import SpectralBatchNorm2d
 
 from models.spectral_norm_conv import spectral_norm_conv
 from models.spectral_norm_fc import spectral_norm_fc
 
-
 class WideBasic(nn.Module):
     def __init__(
-            self,
-            wrapped_conv,
-            wrapped_batchnorm,
-            input_size,
-            in_c,
-            out_c,
-            stride,
-            dropout_rate,
+        self,
+        wrapped_conv,
+        wrapped_batchnorm,
+        input_size,
+        in_c,
+        out_c,
+        stride,
+        dropout_rate,
     ):
         super().__init__()
         self.bn1 = wrapped_batchnorm(in_c)
@@ -56,16 +55,16 @@ class WideBasic(nn.Module):
 
 class WideResNet(nn.Module):
     def __init__(
-            self,
-            input_size=28,
-            spectral_conv=True,
-            spectral_bn=True,
-            depth=28,
-            widen_factor=1,
-            num_classes=10,
-            dropout_rate=0.3,
-            coeff=3,
-            n_power_iterations=1,
+        self,
+        input_size,
+        spectral_conv,
+        spectral_bn,
+        depth=28,
+        widen_factor=10,
+        num_classes=None,
+        dropout_rate=0.3,
+        coeff=3,
+        n_power_iterations=1,
     ):
         super().__init__()
 
@@ -111,7 +110,7 @@ class WideResNet(nn.Module):
         nStages = [16, 16 * k, 32 * k, 64 * k]
         strides = [1, 1, 2, 2]
 
-        self.conv1 = wrapped_conv(input_size, 1, nStages[0], 3, strides[0])
+        self.conv1 = wrapped_conv(input_size, 3, nStages[0], 3, strides[0])
         self.layer1, input_size = self._wide_layer(
             nStages[0:2], n, strides[1], input_size
         )
@@ -158,7 +157,7 @@ class WideResNet(nn.Module):
 
         return nn.Sequential(*layers), input_size
 
-    def latent_representation(self, x):
+    def forward(self, x):
         out = self.conv1(x)
         out = self.layer1(out)
         out = self.layer2(out)
@@ -166,40 +165,9 @@ class WideResNet(nn.Module):
         out = F.relu(self.bn1(out))
         out = F.avg_pool2d(out, out.shape[-1])
         out = out.flatten(1)
-        return out
-
-    def forward(self, x):
-        out = self.latent_representation(x)
 
         if self.num_classes is not None:
             out = self.linear(out)
             out = F.log_softmax(out, dim=1)
 
         return out
-
-    def probabilities(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Returns the class probabilities for the input x
-        :param x: input features
-        :return: class probabilities
-        """
-        x = self.latent_representation(x)
-        x = self.linear(x)
-        return F.softmax(x, dim=-1)
-
-    def presoftmax(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Returns the preactivation outputs for the input x
-        :param x: input features
-        :return: presoftmax activations
-        """
-        x = self.latent_representation(x)
-        return self.linear(x)
-
-    def latent_to_presoftmax(self, h: torch.Tensor) -> torch.Tensor:
-        """
-        Maps a latent representation to a preactivation output
-        :param h: latent representations
-        :return: presoftmax activations
-        """
-        return self.linear(h)
