@@ -575,9 +575,12 @@ def outlier_detection(
                            f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
     )
     current_path = Path.cwd()
+    print(current_path)
     save_path = current_path / save_path
+    print(save_path)
     # Create saving directory if inexistent
     if not save_path.exists():
+        print("pass")
         print(f"Creating the saving directory {save_path}")
         os.makedirs(save_path)
 
