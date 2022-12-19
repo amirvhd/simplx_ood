@@ -630,12 +630,10 @@ def outlier_detection(
     cifar100_test_loader = load_cifar100(batch_size=1000, train=False)
     corpus_features = []
     for i, (corpus_feature, _) in enumerate(corpus_loader):
-        print(corpus_feature.shape)
         # corpus_examples = enumerate(corpus_loader)
         # batch_id_corpus, (corpus_features, corpus_target) = next(corpus_examples)
         corpus_features.append(corpus_feature)
-    print(len(corpus_features))
-    corpus_features = numpy.array(corpus_features)
+    corpus_features = torch.stack(corpus_features, dim=0)
     corpus_features = torch.tensor(corpus_features).to(device).detach()
 
     # cifar10_test_examples = enumerate(cifar10_test_loader)
