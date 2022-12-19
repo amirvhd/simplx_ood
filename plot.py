@@ -18,7 +18,7 @@ def manin():
     sorted_error_sn = numpy.argsort(error_sn)
     sorted_error_sn[sorted_error_sn <= 10000] = 0
     sorted_error_sn[sorted_error_sn > 10000] = 1
-    print(sum(sorted_error[:10000]))
+    print(sum(sorted_error_base[:10000]))
     print(sum(sorted_error_sn[:10000]))
     # fig = plt.figure()
     # plt.imshow(data, cmap="gray", interpolation="none")
