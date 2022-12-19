@@ -3,7 +3,7 @@
 
 import torch.nn as nn
 import torch.nn.functional as F
-
+import torch
 from models.spectral_batchnorm import SpectralBatchNorm2d
 
 from models.spectral_norm_conv import spectral_norm_conv
@@ -57,12 +57,12 @@ class WideResNet(nn.Module):
     def __init__(
         self,
         input_size=32,
-        spectral_conv=False,
-        spectral_bn=False,
+        spectral_conv=True,
+        spectral_bn=True,
         depth=28,
         widen_factor=10,
         num_classes=10,
-        dropout_rate=0.3,
+        dropout_rate=0.1,
         coeff=3,
         n_power_iterations=1,
     ):
@@ -157,7 +157,7 @@ class WideResNet(nn.Module):
 
         return nn.Sequential(*layers), input_size
 
-    def forward(self, x):
+    def latent_representation(self, x):
         out = self.conv1(x)
         out = self.layer1(out)
         out = self.layer2(out)
@@ -165,9 +165,41 @@ class WideResNet(nn.Module):
         out = F.relu(self.bn1(out))
         out = F.avg_pool2d(out, out.shape[-1])
         out = out.flatten(1)
+        return out
+
+    def forward(self, x):
+        out = self.latent_representation(x)
 
         if self.num_classes is not None:
             out = self.linear(out)
             out = F.log_softmax(out, dim=1)
 
         return out
+
+    def probabilities(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Returns the class probabilities for the input x
+        :param x: input features
+        :return: class probabilities
+        """
+        x = self.latent_representation(x)
+        x = self.linear(x)
+        return F.softmax(x, dim=-1)
+
+    def presoftmax(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Returns the preactivation outputs for the input x
+        :param x: input features
+        :return: presoftmax activations
+        """
+        x = self.latent_representation(x)
+        return self.linear(x)
+
+    def latent_to_presoftmax(self, h: torch.Tensor) -> torch.Tensor:
+        """
+        Maps a latent representation to a preactivation output
+        :param h: latent representations
+        :return: presoftmax activations
+        """
+        return self.linear(h)
+
