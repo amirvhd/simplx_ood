@@ -603,28 +603,6 @@ def outlier_detection(
     classifier2.eval()
 
     # Load data:
-    # corpus_loader = load_mnist(batch_size=1000, train=True)
-    # mnist_test_loader = load_mnist(batch_size=100, train=False)
-    # emnist_test_loader = load_emnist(batch_size=100, train=True)
-    # corpus_examples = enumerate(corpus_loader)
-    # batch_id_corpus, (corpus_features, corpus_target) = next(corpus_examples)
-    # corpus_features = corpus_features.to(device).detach()
-    # mnist_test_examples = enumerate(mnist_test_loader)
-    # batch_id_test_mnist, (mnist_test_features, mnist_test_target) = next(
-    #     mnist_test_examples
-    # )
-    # mnist_test_features = mnist_test_features.to(device).detach()
-    # emnist_test_examples = enumerate(emnist_test_loader)
-    # batch_id_test_emnist, (emnist_test_features, emnist_test_target) = next(
-    #     emnist_test_examples
-    # )
-    # emnist_test_features = emnist_test_features.to(device).detach()
-    # test_features = torch.cat([mnist_test_features, emnist_test_features], dim=0)
-    #
-    # corpus_latent_reps1 = classifier1.latent_representation(corpus_features).detach()
-    # test_latent_reps1 = classifier1.latent_representation(test_features).detach()
-    # corpus_latent_reps2 = classifier2.latent_representation(corpus_features).detach()
-    # test_latent_reps2 = classifier2.latent_representation(test_features).detach()
     corpus_loader = load_cifar10(batch_size=1000, train=True)
     cifar10_test_loader = load_cifar10(batch_size=1000, train=False)
     cifar100_test_loader = load_cifar100(batch_size=1000, train=False)
@@ -632,44 +610,42 @@ def outlier_detection(
     corpus_latent_reps2 = []
     corpus_features = []
     for i, (corpus_feature, _) in enumerate(corpus_loader):
-        # corpus_examples = enumerate(corpus_loader)
-        # batch_id_corpus, (corpus_features, corpus_target) = next(corpus_examples)
         corpus_features.append(corpus_feature)
-        corpus_latent_reps1.append(classifier1.latent_representation(corpus_feature).detach())
-        corpus_latent_reps2.append(classifier1.latent_representation(corpus_feature).detach())
+        corpus_latent_reps1.append(classifier1.latent_representation(corpus_feature.to(device).detach()).detach())
+        corpus_latent_reps2.append(classifier1.latent_representation(corpus_feature.to(device).detach()).detach())
     corpus_features = torch.stack(corpus_features).squeeze(0).to(device).detach()
     corpus_latent_reps1 = torch.stack(corpus_latent_reps1).squeeze(0).to(device).detach()
     corpus_latent_reps2 = torch.stack(corpus_latent_reps2).squeeze(0).to(device).detach()
-    # cifar10_test_examples = enumerate(cifar10_test_loader)
-    # batch_id_test_mnist, (cifar10_test_features, cifar10_test_target) = next(
-    #     cifar10_test_examples
-    # )
+
     cifar10_test_features = []
     cifar10_test_latent_reps1 = []
+    cifar10_test_latent_reps2 = []
     for i, (cifar10_test_feature, _) in enumerate(cifar10_test_loader):
         cifar10_test_features.append(cifar10_test_feature)
-        cifar10_test_latent_reps1.append(classifier1.latent_representation(cifar10_test_feature).detach())
+        cifar10_test_latent_reps1.append(
+            classifier1.latent_representation(cifar10_test_feature.to(device).detach()).detach())
+        cifar10_test_latent_reps2.append(
+            classifier2.latent_representation(cifar10_test_feature.to(device).detach()).detach())
     cifar10_test_features = torch.stack(cifar10_test_features).squeeze(0).to(device).detach()
     cifar10_test_latent_reps1 = torch.stack(cifar10_test_latent_reps1).squeeze(0).to(device).detach()
-    # cifar100_test_examples = enumerate(cifar100_test_loader)
-    # batch_id_test_cifar100, (cifar100_test_features, cifar100_test_target) = next(
-    #     cifar100_test_examples
-    # )
+    cifar10_test_latent_reps2 = torch.stack(cifar10_test_latent_reps2).squeeze(0).to(device).detach()
+
     cifar100_test_features = []
     cifar100_test_latent_reps1 = []
+    cifar100_test_latent_reps2 = []
     for i, (cifar100_test_feature, _) in enumerate(cifar100_test_loader):
         cifar100_test_features.append(cifar100_test_feature)
-        cifar100_test_latent_reps1.append(classifier1.latent_representation(cifar100_test_feature).detach())
+        cifar100_test_latent_reps1.append(
+            classifier1.latent_representation(cifar100_test_feature.to(device).detach()).detach())
+        cifar100_test_latent_reps2.append(
+            classifier2.latent_representation(cifar100_test_feature.to(device).detach()).detach())
     cifar100_test_features = torch.stack(cifar100_test_features).squeeze(0).to(device).detach()
     cifar100_test_latent_reps1 = torch.stack(cifar100_test_latent_reps1).squeeze(0).to(device).detach()
-
+    cifar100_test_latent_reps2 = torch.stack(cifar100_test_latent_reps2).squeeze(0).to(device).detach()
     test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, cifar100_test_latent_reps1], dim=0)
-    test_latent_reps2 = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
-    test_features = torch.cat([cifar10_test_latent_reps1, cifar100_test_latent_reps1], dim=0)
-    # corpus_latent_reps1 = classifier1.latent_representation(corpus_features).detach()
-    # test_latent_reps1 = classifier1.latent_representation(test_features).detach()
-    # corpus_latent_reps2 = classifier2.latent_representation(corpus_features).detach()
-    # test_latent_reps2 = classifier2.latent_representation(test_features).detach()
+    test_latent_reps2 = torch.cat([cifar10_test_latent_reps2 , cifar100_test_latent_reps2], dim=0)
+    test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
+
     # Fit corpus:
     simplex1 = Simplex(
         corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps1
