@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from simplexai.models.base import BlackBox
+from models.base import BlackBox
 # from simplexai.models import spectral_norm_conv, spectral_norm_fc, SpectralBatchNorm2d
 
 
