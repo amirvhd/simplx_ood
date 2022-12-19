@@ -633,7 +633,7 @@ def outlier_detection(
         # corpus_examples = enumerate(corpus_loader)
         # batch_id_corpus, (corpus_features, corpus_target) = next(corpus_examples)
         corpus_features.append(corpus_feature)
-    corpus_features = torch.stack(corpus_features, dim=0).to(device).detach()
+    corpus_features = torch.stack(corpus_features).to(device).detach()
 
     # cifar10_test_examples = enumerate(cifar10_test_loader)
     # batch_id_test_mnist, (cifar10_test_features, cifar10_test_target) = next(
@@ -642,7 +642,7 @@ def outlier_detection(
     cifar10_test_features = []
     for i, (cifar10_test_feature, _) in enumerate(cifar10_test_loader):
         cifar10_test_features.append(cifar10_test_feature)
-    cifar10_test_features = torch.stack(cifar10_test_features, dim=0).to(device).detach()
+    cifar10_test_features = torch.stack(cifar10_test_features).to(device).detach()
     # cifar100_test_examples = enumerate(cifar100_test_loader)
     # batch_id_test_cifar100, (cifar100_test_features, cifar100_test_target) = next(
     #     cifar100_test_examples
@@ -650,7 +650,7 @@ def outlier_detection(
     cifar100_test_features = []
     for i, (cifar100_test_feature, _) in enumerate(cifar100_test_loader):
         cifar100_test_features.append(cifar100_test_feature)
-    cifar100_test_features = torch.stack(cifar100_test_features, dim=0).to(device).detach()
+    cifar100_test_features = torch.stack(cifar100_test_features).to(device).detach()
 
     test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
 
