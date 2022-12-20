@@ -26,7 +26,7 @@ def main():
     # print(sum(sorted_error_sn[:10000]))
     cumulative = numpy.cumsum(sorted_error_base)
     cumulative2 = numpy.cumsum(sorted_error_sn)
-    x = numpy.random.randint(2, 20000)
+    x = numpy.random.randint(2, size=20000)
     cumulative3 = numpy.cumsum(x)
     x_best = numpy.zeros(20000)
     x_best[:10000] = 1
