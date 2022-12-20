@@ -707,7 +707,7 @@ def outlier_detection(
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex1, f)
     simplex2 = Simplex(
-        corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps2
+        corpus_examples=corpus_features[:1000], corpus_latent_reps=corpus_latent_reps2[:1000]
     )
     simplex2.fit(
         test_examples=test_features[:10000],
