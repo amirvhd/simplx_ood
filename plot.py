@@ -11,7 +11,7 @@ def main():
     error_base = ((data_base.test_latent_reps - pred_base) ** 2).sum(1).cpu().numpy()
     pred_sn = data_sn.latent_approx()
     error_sn = ((data_sn.test_latent_reps - pred_sn) ** 2).sum(1).cpu().numpy()
-    sorted_error_base = numpy.flip(numpy.argsort(error_base))
+    sorted_error_base = numpy.argsort(error_base)
     sorted_error_base[sorted_error_base <= 10000] = 0
     sorted_error_base[sorted_error_base > 10000] = 1
     sorted_error_sn = numpy.argsort(error_sn)
