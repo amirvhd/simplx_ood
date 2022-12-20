@@ -11,18 +11,23 @@ def main():
     error_base = ((data_base.test_latent_reps - pred_base) ** 2).sum(1).cpu().numpy()
     pred_sn = data_sn.latent_approx()
     error_sn = ((data_sn.test_latent_reps - pred_sn) ** 2).sum(1).cpu().numpy()
-    sorted_error_base = numpy.argsort(error_base)
+    sorted_error_base = numpy.flip(numpy.argsort(error_base))
     sorted_error_base[sorted_error_base <= 10000] = 0
     sorted_error_base[sorted_error_base > 10000] = 1
-    sorted_error_sn = numpy.argsort(error_sn)
+    sorted_error_sn = numpy.flip(numpy.argsort(error_sn))
     sorted_error_sn[sorted_error_sn <= 10000] = 0
     sorted_error_sn[sorted_error_sn > 10000] = 1
     # print(sum(error_base[:10000]))
     # print(sum(error_sn[:10000]))
     # print(sum(error_base[10000:]))
     # print(sum(error_sn[10000:]))
-    print(sorted_error_base[:10])
+    # print(sorted_error_base[:10])
     # print(sum(sorted_error_sn[:10000]))
+    cumulative = numpy.cumsum(sorted_error_base)
+    cumulative2 = numpy.cumsum(sorted_error_sn)
+    plt.plot(cumulative, c='blue')
+    plt.plot(cumulative2, c='green')
+    plt.savefig('cifar100_cifar10.png')
     # fig = plt.figure()
     # plt.imshow(data, cmap="gray", interpolation="none")
     # plt.title("CIFAR100-ood-detection")
