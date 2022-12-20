@@ -687,9 +687,9 @@ def outlier_detection(
     test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, cifar100_test_latent_reps2], dim=0)
     test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
 
-    # test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, svhn_test_latent_reps1], dim=0)
-    # test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, svhn_test_latent_reps2], dim=0)
-    # test_features = torch.cat([cifar10_test_features, svhn_test_features], dim=0)
+    test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, svhn_test_latent_reps1], dim=0)
+    test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, svhn_test_latent_reps2], dim=0)
+    test_features = torch.cat([cifar10_test_features, svhn_test_features], dim=0)
 
     # Fit corpus:
     simplex1 = Simplex(
@@ -702,7 +702,7 @@ def outlier_detection(
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path1 / f"simplex_svhn_cv{cv}.pkl"
+    explainer_path = save_path1 / f"simplex_cv{cv}.pkl"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex1, f)
@@ -716,7 +716,7 @@ def outlier_detection(
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path2 / f"simplex_svhn_cv{cv}.pkl"
+    explainer_path = save_path2 / f"simplex_cv{cv}.pkl"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex2, f)
