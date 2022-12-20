@@ -597,7 +597,7 @@ def outlier_detection(
 
     # Load the model
     # classifier = MnistClassifier()
-    save_path1 = current_path / "experiments/results/cifar/outlier_sn/"
+    save_path1 = current_path / "experiments/results/cifar/outlier/"
     classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
     # classifier1.load_state_dict(torch.load(os.path.join(save_path1, f"model_cv{cv}.pth")))
     new_state_dict = {}
