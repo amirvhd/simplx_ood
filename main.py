@@ -687,9 +687,9 @@ def outlier_detection(
     test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, cifar100_test_latent_reps2], dim=0)
     test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
 
-    test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, svhn_test_latent_reps1], dim=0)
-    test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, svhn_test_latent_reps2], dim=0)
-    test_features = torch.cat([cifar10_test_features, svhn_test_features], dim=0)
+    # test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, svhn_test_latent_reps1], dim=0)
+    # test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, svhn_test_latent_reps2], dim=0)
+    # test_features = torch.cat([cifar10_test_features, svhn_test_features], dim=0)
 
     # Fit corpus:
     simplex1 = Simplex(
