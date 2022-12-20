@@ -639,7 +639,7 @@ def outlier_detection(
     for i, (corpus_feature, _) in enumerate(corpus_loader):
         corpus_features.append(corpus_feature)
         corpus_latent_reps1.append(classifier1.latent_representation(corpus_feature.to(device).detach()).detach())
-        corpus_latent_reps2.append(classifier1.latent_representation(corpus_feature.to(device).detach()).detach())
+        corpus_latent_reps2.append(classifier2.latent_representation(corpus_feature.to(device).detach()).detach())
     corpus_features = torch.cat(corpus_features, dim=0).squeeze(0).to(device).detach()
     corpus_latent_reps1 = torch.cat(corpus_latent_reps1, dim=0).squeeze(0).to(device).detach()
     corpus_latent_reps2 = torch.cat(corpus_latent_reps2, dim=0).squeeze(0).to(device).detach()
