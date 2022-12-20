@@ -3,9 +3,9 @@ import pickle as pkl
 import matplotlib.pyplot as plt
 
 def main():
-    with open('./experiments/results/cifar/outlier/simplex_cifar_cv0.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
         data_base = pkl.load(f)
-    with open('./experiments/results/cifar/outlier_sn/simplex_cifar_cv0.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
         data_sn = pkl.load(f)
     pred_base = data_base.latent_approx()
     error_base = ((data_base.test_latent_reps - pred_base) ** 2).sum(1).numpy()
