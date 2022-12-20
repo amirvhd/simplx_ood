@@ -597,7 +597,7 @@ def outlier_detection(
 
     # Load the model
     # classifier = MnistClassifier()
-    save_path1 = current_path / "experiments/results/cifar/outlier/"
+    save_path1 = "/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/cifar/outlier/"
     classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
     # classifier1.load_state_dict(torch.load(os.path.join(save_path1, f"model_cv{cv}.pth")))
     new_state_dict = {}
@@ -612,7 +612,7 @@ def outlier_detection(
     classifier1.load_state_dict(state_dict)
     classifier1.to(device)
     classifier1.eval()
-    save_path2 = current_path / "experiments/results/cifar/outlier_sn/"
+    save_path2 = "/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/cifar/outlier_sn/"
     new_state_dict = {}
     state_dict = torch.load(
         os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v1.ckpt"),
