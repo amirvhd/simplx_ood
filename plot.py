@@ -31,16 +31,18 @@ def main():
     x_best = numpy.zeros(20000)
     x_best[:10000] = 1
     cumulative4 = numpy.cumsum(x_best)
-    plt.plot(cumulative, c='blue')
-    plt.plot(cumulative2, c='green')
-    plt.plot(cumulative3, c='grey')
-    plt.plot(cumulative4, c='brown')
+    plt.plot(cumulative, c='blue', label="Base model")
+    plt.plot(cumulative2, c='green', label="Model with spectral normalization")
+    plt.plot(cumulative3, c='grey', label="Random")
+    plt.plot(cumulative4, c='brown', label="Maximal")
+    plt.title("CIFAR100-ood-detection")
+    plt.xlabel("Number of images inspected")
+    plt.ylabel("Number of CIFAR100 detected")
+    plt.legend(loc="upper left")
     plt.savefig('cifar100_cifar10.png')
     # fig = plt.figure()
     # plt.imshow(data, cmap="gray", interpolation="none")
-    # plt.title("CIFAR100-ood-detection")
-    # plt.xticks([])
-    # plt.yticks([])
+    #
 
 
 if __name__ == "__main__":
