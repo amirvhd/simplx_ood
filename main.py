@@ -597,7 +597,7 @@ def outlier_detection(
 
     # Load the model
     # classifier = MnistClassifier()
-    save_path1 = "/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/cifar/outlier/"
+    save_path1 = current_path / "experiments/results/cifar/outlier_sn/"
     classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
     # classifier1.load_state_dict(torch.load(os.path.join(save_path1, f"model_cv{cv}.pth")))
     new_state_dict = {}
@@ -692,20 +692,20 @@ def outlier_detection(
     test_features = torch.cat([cifar10_test_features, svhn_test_features], dim=0)
 
     # Fit corpus:
-    # simplex1 = Simplex(
-    #     corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps1
-    # )
-    # simplex1.fit(
-    #     test_examples=test_features[:10000],
-    #     test_latent_reps=test_latent_reps1[:10000],
-    #     n_epoch=n_epoch_simplex,
-    #     reg_factor=0,
-    #     n_keep=corpus_features.shape[0],
-    # )
-    # # explainer_path = save_path1 / f"simplex_svhn1_cv{cv}.pkl"
-    # with open(explainer_path, "wb") as f:
-    #     print(f"Saving simplex decomposition in {explainer_path}.")
-    #     pkl.dump(simplex1, f)
+    simplex1 = Simplex(
+        corpus_examples=corpus_features[:1000], corpus_latent_reps=corpus_latent_reps1[:1000]
+    )
+    simplex1.fit(
+        test_examples=test_features[:10000],
+        test_latent_reps=test_latent_reps1[:10000],
+        n_epoch=n_epoch_simplex,
+        reg_factor=0,
+        n_keep=corpus_features.shape[0],
+    )
+    explainer_path = save_path1 / f"simplex_svhn1_cv{cv}.pkl"
+    with open(explainer_path, "wb") as f:
+        print(f"Saving simplex decomposition in {explainer_path}.")
+        pkl.dump(simplex1, f)
     simplex2 = Simplex(
         corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps2
     )
