@@ -640,9 +640,9 @@ def outlier_detection(
         corpus_features.append(corpus_feature)
         corpus_latent_reps1.append(classifier1.latent_representation(corpus_feature.to(device).detach()).detach())
         corpus_latent_reps2.append(classifier2.latent_representation(corpus_feature.to(device).detach()).detach())
-    corpus_features = torch.cat(corpus_features, dim=0).squeeze(0).to(device).detach()
-    corpus_latent_reps1 = torch.cat(corpus_latent_reps1, dim=0).squeeze(0).to(device).detach()
-    corpus_latent_reps2 = torch.cat(corpus_latent_reps2, dim=0).squeeze(0).to(device).detach()
+    corpus_features = torch.cat(corpus_features, dim=0).to(device).detach()
+    corpus_latent_reps1 = torch.cat(corpus_latent_reps1, dim=0).to(device).detach()
+    corpus_latent_reps2 = torch.cat(corpus_latent_reps2, dim=0).to(device).detach()
 
     cifar10_test_features = []
     cifar10_test_latent_reps1 = []
@@ -696,8 +696,8 @@ def outlier_detection(
         corpus_examples=corpus_features[:1000], corpus_latent_reps=corpus_latent_reps1[:1000]
     )
     simplex1.fit(
-        test_examples=test_features[:1000],
-        test_latent_reps=test_latent_reps1[:1000],
+        test_examples=test_features[:10000],
+        test_latent_reps=test_latent_reps1[:10000],
         n_epoch=n_epoch_simplex,
         reg_factor=0,
         n_keep=corpus_features.shape[0],
@@ -710,8 +710,8 @@ def outlier_detection(
         corpus_examples=corpus_features[:1000], corpus_latent_reps=corpus_latent_reps2[:1000]
     )
     simplex2.fit(
-        test_examples=test_features[:1000],
-        test_latent_reps=test_latent_reps2[:1000],
+        test_examples=test_features[:10000],
+        test_latent_reps=test_latent_reps2[:10000],
         n_epoch=n_epoch_simplex,
         reg_factor=0,
         n_keep=corpus_features.shape[0],
