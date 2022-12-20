@@ -38,7 +38,7 @@ def main():
     plt.title("CIFAR100-ood-detection")
     plt.xlabel("Number of images inspected")
     plt.ylabel("Number of CIFAR100 detected")
-    plt.legend(loc="upper left")
+    plt.legend(loc="lower right")
     plt.savefig('cifar100_cifar10.png')
     # fig = plt.figure()
     # plt.imshow(data, cmap="gray", interpolation="none")
