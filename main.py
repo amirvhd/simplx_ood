@@ -1024,7 +1024,7 @@ def timing_experiment() -> None:
 
 def main(experiment: str, cv: int) -> None:
     if experiment == "approximation_quality":
-        approximation_quality(cv=cv, n_keep_list=[3, 5, 10, 20, 50])
+        approximation_quality(cv=cv)
     elif experiment == "outlier_detection":
         outlier_detection(cv)
     elif experiment == "jacobian_corruption":
