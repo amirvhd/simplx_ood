@@ -103,14 +103,13 @@ class classifier_module(pl.LightningModule):
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
         x, y = batch
         y_hat = self.forward(x)
-        return y_hat
+        return {"predictions":y_hat}
 
     def predict_epoch_end(self, outputs):
 
         predictions = []
         for output in outputs:
-            for out_predictions in output["predictions"].detach().cpu():
-                predictions.append(out_predictions)
+            predictions.append(output["predictions"].detach().cpu())
 
         predictions = torch.stack(predictions)
         probs = torch.nn.functional.softmax(predictions, dim=-1)
