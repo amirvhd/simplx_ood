@@ -11,7 +11,7 @@ import numpy as np
 from ood_metrics import calc_metrics
 
 
-def calc_metrics(ind_score: np.ndarray, ood_score: np.ndarray) -> dict:
+def calc_auroc(ind_score: np.ndarray, ood_score: np.ndarray) -> dict:
     labels = [1] * len(ind_score) + [0] * len(ood_score)
     scores = np.hstack([ind_score, ood_score])
 
@@ -104,13 +104,13 @@ def main():
     # trainer.fit(model, data_module)
 
     ind = trainer.test(model, test_dataloaders=data_module.test_dataloader(),
-                       # ckpt_path=os.path.join(opt.model_path, 'best-checkpoint.ckpt')
+                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
                        )
-    ood = trainer.test(model, datamodule=data_module.predict_dataloader(),
-                       # ckpt_path=os.path.join(opt.model_path, 'best-checkpoint.ckpt')
+    ood = trainer.test(model, test_dataloaders=data_module.predict_dataloader(),
+                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
                        )
-
-    calc_metrics(ind, ood)
+    print(ind)
+    # calc_auroc(ind, ood)
 
 
 if __name__ == '__main__':
