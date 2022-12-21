@@ -695,7 +695,7 @@ def outlier_detection(
     )
     simplex1.fit(
         test_examples=test_features,
-        test_latent_reps=test_latent_reps1[:1000],
+        test_latent_reps=test_latent_reps1[10000:11000],
         n_epoch=n_epoch_simplex,
         reg_factor=0,
         n_keep=corpus_features.shape[0],
@@ -709,7 +709,7 @@ def outlier_detection(
     )
     simplex2.fit(
         test_examples=test_features,
-        test_latent_reps=test_latent_reps2[:1000],
+        test_latent_reps=test_latent_reps2[10000:11000],
         n_epoch=n_epoch_simplex,
         reg_factor=0,
         n_keep=corpus_features.shape[0],
