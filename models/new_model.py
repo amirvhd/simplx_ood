@@ -57,8 +57,8 @@ class WideResNet(nn.Module):
     def __init__(
         self,
         input_size=32,
-        spectral_conv=True,
-        spectral_bn=True,
+        spectral_conv=False,
+        spectral_bn=False,
         depth=28,
         widen_factor=10,
         num_classes=10,
