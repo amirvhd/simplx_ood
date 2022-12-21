@@ -376,7 +376,7 @@ def approximation_quality(
     classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint.ckpt"),
+        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v1.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
@@ -389,7 +389,7 @@ def approximation_quality(
 
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v6.ckpt"),
+        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v2.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
@@ -400,9 +400,9 @@ def approximation_quality(
     classifier2.load_state_dict(state_dict)
     classifier2.to(device)
     classifier2.eval()
-    with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/outlier/simplex_t2_cv0.pkl', 'rb') as f:
         data_base = pkl.load(f)
-    with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/outlier_sn/simplex_t2_cv0.pkl', 'rb') as f:
         data_sn = pkl.load(f)
     # Load the explainer
     latent_rep_approx = data_base.latent_approx()[:10000]
