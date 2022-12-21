@@ -105,9 +105,9 @@ def main():
     )
     # trainer.fit(model, data_module)
 
-    # trainer.test(model, datamodule=data_module,
-    #                    ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt')
-    #                    )
+    trainer.test(model, datamodule=data_module,
+                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt')
+                       )
     # ind = model.get_results()
     # trainer.predict(model, datamodule=data_module,
     #                    ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt')
