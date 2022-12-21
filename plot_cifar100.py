@@ -97,7 +97,7 @@ def main():
     model = classifier_module(
         n_classes=opt.n_cls, lr=opt.lr, wd=opt.wd, n_layers=opt.n_freeze_layers
     )
-    model = model.load_from_checkpoint(checkpoint_path=os.path.join(opt.model_path, 'best-checkpoint.ckpt'))
+    model = model.load_from_checkpoint(checkpoint_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt'))
     model.cuda()
     with torch.no_grad():
         prob2, prob = [], []
