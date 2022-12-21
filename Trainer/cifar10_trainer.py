@@ -27,7 +27,7 @@ class classifier_module(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        outputs = self.forward(x, y)
+        outputs = self.forward(x)
         loss = self.criterion(outputs, y)
         self.log("train_loss", loss, prog_bar=True, logger=True)
         return {"loss": loss, "predictions": outputs.detach(), "labels": y}
@@ -53,7 +53,7 @@ class classifier_module(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
-        outputs = self.forward(x, y)
+        outputs = self.forward(x)
         loss = self.criterion(outputs, y)
         self.log("val_loss", loss, prog_bar=True, logger=True)
         return {"val_loss": loss, "predictions": outputs.detach(), "labels": y}
@@ -77,7 +77,7 @@ class classifier_module(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         x, y = batch
-        outputs = self.forward(x, y)
+        outputs = self.forward(x)
         loss = self.criterion(outputs, y)
         self.log("test_loss", loss, prog_bar=True, logger=True)
         return {"loss": loss, "predictions": outputs.detach(), "labels": y}
