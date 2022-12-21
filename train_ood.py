@@ -113,21 +113,23 @@ def main():
     #                    ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt')
     #                    )
     # ood = model.get_results()
-    model=model.load_from_checkpoint(checkpoint_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt'))
+    model = model.load_from_checkpoint(checkpoint_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt'))
+    model.cuda()
     with torch.no_grad():
         prob2, prob = [], []
         data_module.setup(stage="test")
         for idx, (images, labels) in enumerate(data_module.test_dataloader()):
-            images = images.float()
+            images = images.float().cuda()
             output = model.forward(images)
             res = torch.max(torch.softmax(output, dim=-1), dim=-1).values
             prob.extend(res.cpu().numpy())
         data_module.setup(stage="predict")
         for idx, (images, labels) in enumerate(data_module.predict_dataloader()):
-            images = images.float()
+            images = images.float().cuda()
             output = model.forward(images)
             res2 = torch.max(torch.softmax(output, dim=-1), dim=-1).values
             prob2.extend(res2.cpu().numpy())
+    print("pass")
     prob = numpy.concatenate(prob)
     prob2 = numpy.concatenate(prob2)
     print(calc_auroc(prob, prob2))
