@@ -119,7 +119,7 @@ def main():
     print(prob)
     print(pdf_cifar10_base)
     f_prob= numpy.maximum(prob, pdf_cifar10_base)
-    f_prob2 = numpy.maximum(prob2, pdf_cifar100_base)
+    f_prob2 = numpy.minimum(prob2, pdf_cifar100_base)
     print(calc_auroc(f_prob, f_prob2))
 
 
