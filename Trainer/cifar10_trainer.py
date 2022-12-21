@@ -15,7 +15,7 @@ class classifier_module(pl.LightningModule):
         self.n_cls = n_classes
         self.num_freeze_layers = n_layers
         self.drop = drop
-
+        self.results = None
         self.model = WideResNet(dropout_rate=self.drop)
         self.criterion = nn.CrossEntropyLoss()
 
@@ -95,10 +95,10 @@ class classifier_module(pl.LightningModule):
         predictions = torch.stack(predictions)
         probs = torch.nn.functional.softmax(predictions, dim=-1)
         acc = accuracy(probs, labels, num_classes=self.n_cls)
-        max_probs = torch.max(probs, dim=-1).values.cpu().numpy()
+        self.results = torch.max(probs, dim=-1).values.cpu().numpy()
 
         self.log("test_acc", acc, prog_bar=True, logger=True)
-        return max_probs
+
 
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
         x, y = batch
@@ -113,8 +113,8 @@ class classifier_module(pl.LightningModule):
 
         predictions = torch.stack(predictions)
         probs = torch.nn.functional.softmax(predictions, dim=-1)
-        max_probs = torch.max(probs, dim=-1).values.cpu().numpy()
-        return max_probs
+        self.results = torch.max(probs, dim=-1).values.cpu().numpy()
+
 
     def configure_optimizers(self):
         # optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, weight_decay=self.weight_decay)
@@ -131,3 +131,5 @@ class classifier_module(pl.LightningModule):
         return {"optimizer": optimizer,
                 "lr_scheduler": scheduler,
                 "monitor": "val_loss"}
+    def get_results(self):
+        return self.results
