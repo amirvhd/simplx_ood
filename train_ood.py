@@ -106,11 +106,11 @@ def main():
     trainer.test(model, datamodule=data_module,
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
                        )
-    ind = model.get_results()
+    ind = model.get_results().detach().cpu()
     trainer.predict(model, datamodule=data_module,
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
                        )
-    ood = model.get_results()
+    ood = model.get_results().detach().cpu()
     print(calc_auroc(ind, ood))
 
 
