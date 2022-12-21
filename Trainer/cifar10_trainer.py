@@ -6,8 +6,6 @@ from torchvision.models import resnet50
 from models.new_model import WideResNet
 
 
-
-
 class classifier_module(pl.LightningModule):
 
     def __init__(self, n_classes=10, lr=5e-1, wd=0, n_layers=0, drop=0.3, **kwargs):
@@ -94,10 +92,29 @@ class classifier_module(pl.LightningModule):
         predictions = torch.stack(predictions)
         probs = torch.nn.functional.softmax(predictions, dim=-1)
         acc = accuracy(probs, labels, num_classes=self.n_cls)
-        max_probs= torch.max(probs, dim=-1).values.cpu().numpy()
+        max_probs = torch.max(probs, dim=-1).values.cpu().numpy()
 
         self.log("test_acc", acc, prog_bar=True, logger=True)
         return max_probs
+
+    def predict_epoch_end(self, outputs):
+        labels = []
+        predictions = []
+        for output in outputs:
+            for out_labels in output["labels"].detach().cpu():
+                labels.append(out_labels)
+            for out_predictions in output["predictions"].detach().cpu():
+                predictions.append(out_predictions)
+
+        labels = torch.stack(labels).int()
+        predictions = torch.stack(predictions)
+        probs = torch.nn.functional.softmax(predictions, dim=-1)
+        acc = accuracy(probs, labels, num_classes=self.n_cls)
+        max_probs = torch.max(probs, dim=-1).values.cpu().numpy()
+
+        self.log("test_acc", acc, prog_bar=True, logger=True)
+        return max_probs
+
     def configure_optimizers(self):
         # optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, weight_decay=self.weight_decay)
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9,
