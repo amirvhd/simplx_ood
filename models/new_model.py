@@ -172,7 +172,6 @@ class WideResNet(nn.Module):
 
         if self.num_classes is not None:
             out = self.linear(out)
-            out = F.log_softmax(out, dim=1)
 
         return out
 
