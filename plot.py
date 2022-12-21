@@ -49,22 +49,14 @@ def main():
     error_sn2 = ((data_sn2.test_latent_reps - pred_sn2) ** 2).sum(1).cpu().numpy()
     error_base = numpy.concatenate((error_base1, error_base2), axis=0)
     error_sn = numpy.concatenate((error_sn1, error_sn2), axis=0)
-    print(error_sn1.shape)
-    print(error_sn2.shape)
-    print(error_base1.shape)
-    print(error_base2.shape)
+
     sorted_error_base = numpy.flip(numpy.argsort(error_base))
     sorted_error_base[sorted_error_base <= 10000] = 0
     sorted_error_base[sorted_error_base > 10000] = 1
     sorted_error_sn = numpy.flip(numpy.argsort(error_sn))
     sorted_error_sn[sorted_error_sn <= 10000] = 0
     sorted_error_sn[sorted_error_sn > 10000] = 1
-    # print(sum(error_base[:10000]))
-    # print(sum(error_sn[:10000]))
-    # print(sum(error_base[10000:]))
-    # print(sum(error_sn[10000:]))
-    # print(sorted_error_base[:10])
-    # print(sum(sorted_error_sn[:10000]))
+
     cumulative = numpy.cumsum(sorted_error_base)
     cumulative2 = numpy.cumsum(sorted_error_sn)
     x = numpy.random.randint(2, size=36032)
@@ -83,11 +75,9 @@ def main():
     plt.ylabel("Number of SVHN detected")
     plt.legend(loc="lower right")
     plt.savefig('SVHN_cifar10.png')
-    # fig = plt.figure()
-    # plt.imshow(data, cmap="gray", interpolation="none")
-    #
+
     mean_base = numpy.mean(error_base1)
-    std_base = numpy.var(error_base1)
+    std_base = numpy.std(error_base1)
     dist_in = torch.distributions.normal.Normal(loc=mean_base, scale=std_base)
     pdf_svhn_base = dist_in.log_prob(torch.tensor(error_base2)).numpy()
     pdf_cifar_base = dist_in.log_prob(torch.tensor(error_base1)).numpy()
