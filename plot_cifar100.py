@@ -43,8 +43,8 @@ def main():
     pdf_cifar10_sn = torch.zeros(10000)
     pdf_cifar100_sn = torch.zeros(10000)
     for i in range(10000, 20000):
-        pdf_cifar100_base[i] = torch.exp(dist_in_base.log_prob(torch.tensor(error_base[i])))
-        pdf_cifar100_sn[i] = torch.exp(dist_in_sn.log_prob(torch.tensor(error_sn[i])))
+        pdf_cifar100_base[i-10000] = torch.exp(dist_in_base.log_prob(torch.tensor(error_base[i])))
+        pdf_cifar100_sn[i-10000] = torch.exp(dist_in_sn.log_prob(torch.tensor(error_sn[i])))
     for i in range(10000):
         pdf_cifar10_base[i] = torch.exp(dist_in_base.log_prob(torch.tensor(error_base[i])))
         pdf_cifar10_sn[i] = torch.exp(dist_in_sn.log_prob(torch.tensor(error_sn[i])))
