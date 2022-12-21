@@ -81,13 +81,17 @@ def main():
     dist_in = torch.distributions.normal.Normal(loc=mean_base, scale=std_base)
     pdf_cifar_base = torch.zeros(10000)
     pdf_svhn_base = torch.zeros(26032)
+    pdf_cifar_sn = torch.zeros(10000)
+    pdf_svhn_sn = torch.zeros(26032)
     for i in range(26032):
         pdf_svhn_base[i] = torch.exp(dist_in.log_prob(torch.tensor(error_base2[i])))
+        pdf_svhn_sn[i] = torch.exp(dist_in.log_prob(torch.tensor(error_sn2[i])))
     for i in range(10000):
         pdf_cifar_base[i] = torch.exp(dist_in.log_prob(torch.tensor(error_base1[i])))
-    print("done")
+        pdf_cifar_sn[i] = torch.exp(dist_in.log_prob(torch.tensor(error_sn1[i])))
     res = calc_auroc(pdf_cifar_base.numpy(), pdf_svhn_base.numpy())
-    print(res)
+    res_sn = calc_auroc(pdf_cifar_sn.numpy(), pdf_svhn_sn.numpy())
+    print(res_sn)
 
 if __name__ == "__main__":
     main()
