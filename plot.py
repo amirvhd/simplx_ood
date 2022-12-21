@@ -49,10 +49,10 @@ def main():
     # print(sum(sorted_error_sn[:10000]))
     cumulative = numpy.cumsum(sorted_error_base)
     cumulative2 = numpy.cumsum(sorted_error_sn)
-    x = numpy.random.randint(2, size=20000)
+    x = numpy.random.randint(2, size=36032)
     cumulative3 = numpy.cumsum(x)
-    x_best = numpy.zeros(20000)
-    x_best[:10000] = 1
+    x_best = numpy.zeros(36032)
+    x_best[:26032] = 1
     cumulative4 = numpy.cumsum(x_best)
     print(roc_auc_score(x_best, sorted_error_base))
     print(roc_auc_score(x_best, sorted_error_sn))
