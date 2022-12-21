@@ -33,8 +33,7 @@ class cifar10_module(pl.LightningDataModule):
             transforms.ToTensor(),
             normalize
         ])
-        self.test_dataset= None
-        self.predict_dataset= None
+
     def setup(self, stage=None):
         train_dataset = datasets.CIFAR10(root=self.data_dir, train=True, download=True,
                                          transform=self.data_transform_train)
