@@ -1,6 +1,8 @@
 import os
 import argparse
 
+import numpy
+
 from Dataloader.cifar_datamodule import cifar10_module
 from Trainer.cifar10_trainer import classifier_module
 import torch
@@ -103,15 +105,29 @@ def main():
     )
     # trainer.fit(model, data_module)
 
-    trainer.test(model, datamodule=data_module,
-                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt')
-                       )
-    ind = model.get_results()
-    trainer.predict(model, datamodule=data_module,
-                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt')
-                       )
-    ood = model.get_results()
-    print(calc_auroc(ind, ood))
+    # trainer.test(model, datamodule=data_module,
+    #                    ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt')
+    #                    )
+    # ind = model.get_results()
+    # trainer.predict(model, datamodule=data_module,
+    #                    ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt')
+    #                    )
+    # ood = model.get_results()
+    with torch.no_grad():
+        prob2, prob = [], []
+        for idx, (images, labels) in enumerate(data_module.test_dataloader()):
+            images = images.float().cuda()
+            output = model(images)
+            res = torch.max(torch.softmax(output, dim=-1), dim=-1).values
+            prob.extend(res.cpu().numpy())
+        for idx, (images, labels) in enumerate(data_module.predict_dataloader()):
+            images = images.float().cuda()
+            output = model(images)
+            res2 = torch.max(torch.softmax(output, dim=-1), dim=-1).values
+            prob2.extend(res2.cpu().numpy())
+    prob = numpy.concatenate(prob)
+    prob2 = numpy.concatenate(prob2)
+    print(calc_auroc(prob, prob2))
 
 
 if __name__ == '__main__':
