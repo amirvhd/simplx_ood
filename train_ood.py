@@ -113,7 +113,7 @@ def main():
     #                    ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt')
     #                    )
     # ood = model.get_results()
-    model=model(checkpoint_callback=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt'))
+    model=model.load_from_checkpoint(checkpoint_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt'))
     with torch.no_grad():
         prob2, prob = [], []
         for idx, (images, labels) in enumerate(data_module.test_dataloader()):
