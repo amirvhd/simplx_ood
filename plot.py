@@ -30,8 +30,8 @@ def main():
     pred_sn2 = data_sn2.latent_approx()
     error_sn2 = ((data_sn2.test_latent_reps - pred_sn2) ** 2).sum(1).cpu().numpy()
     print(error_base1.shape)
-    error_base = numpy.concatenate((error_base1, error_base2))
-    error_sn = numpy.concatenate((error_sn1, error_sn2))
+    error_base = numpy.concatenate((error_base1, error_base2), axis=0)
+    error_sn = numpy.concatenate((error_sn1, error_sn2), axis=0)
     sorted_error_base = numpy.flip(numpy.argsort(error_base))
     sorted_error_base[sorted_error_base <= 10000] = 0
     sorted_error_base[sorted_error_base > 10000] = 1
