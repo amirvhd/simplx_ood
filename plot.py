@@ -79,9 +79,10 @@ def main():
     mean_base = numpy.mean(error_base1)
     std_base = numpy.std(error_base1)
     dist_in = torch.distributions.normal.Normal(loc=mean_base, scale=std_base)
-    pdf_svhn_base = dist_in.log_prob(torch.tensor(error_base2)).numpy()
-    pdf_cifar_base = dist_in.log_prob(torch.tensor(error_base1)).numpy()
-    calc_metrics(pdf_cifar_base, pdf_svhn_base)
+    pdf_svhn_base = dist_in.log_prob(torch.tensor(error_base2[0])).numpy()
+    pdf_cifar_base = dist_in.log_prob(torch.tensor(error_base1[0])).numpy()
+    print(pdf_cifar_base)
+    # calc_metrics(pdf_cifar_base, pdf_svhn_base)
 
 
 if __name__ == "__main__":
