@@ -106,9 +106,9 @@ def main():
     ind = trainer.test(model, datamodule=data_module,
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
                        )
-    ood = trainer.predict(model, datamodule=data_module,
-                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
-                       )
+    # ood = trainer.predict(model, datamodule=data_module,
+    #                    ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
+    #                    )
     print(ind)
     # calc_auroc(ind, ood)
 
