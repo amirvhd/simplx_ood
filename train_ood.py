@@ -106,12 +106,12 @@ def main():
     trainer.test(model, datamodule=data_module,
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint.ckpt')
                        )
-    ind = trainer.on_test_epoch_end()
+    ind = model.get_results()
     ood = trainer.predict(model, datamodule=data_module,
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint.ckpt')
                        )
-    print(ind)
-    # calc_auroc(ind, ood)
+    ood = model.get_results()
+    calc_auroc(ind, ood)
 
 
 if __name__ == '__main__':
