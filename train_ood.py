@@ -111,7 +111,7 @@ def main():
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint.ckpt')
                        )
     ood = model.get_results()
-    calc_auroc(ind, ood)
+    print(calc_auroc(ind, ood))
 
 
 if __name__ == '__main__':
