@@ -97,6 +97,11 @@ class classifier_module(pl.LightningModule):
         self.log("test_acc", acc, prog_bar=True, logger=True)
         return max_probs
 
+    def predict_step(self, batch, batch_idx):
+        x, y = batch
+        _, outputs = self.forward(x, y)
+        return {"predictions": outputs.detach()}
+
     def predict_epoch_end(self, outputs):
 
         predictions = []
