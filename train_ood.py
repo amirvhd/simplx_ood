@@ -107,7 +107,7 @@ def main():
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint.ckpt')
                        )
     ind = model.get_results()
-    ood = trainer.predict(model, datamodule=data_module,
+    trainer.predict(model, datamodule=data_module,
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint.ckpt')
                        )
     ood = model.get_results()
