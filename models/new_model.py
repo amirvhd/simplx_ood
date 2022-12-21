@@ -62,7 +62,7 @@ class WideResNet(nn.Module):
         depth=28,
         widen_factor=10,
         num_classes=10,
-        dropout_rate=0.3,
+        dropout_rate=0.1,
         coeff=3,
         n_power_iterations=1,
     ):
