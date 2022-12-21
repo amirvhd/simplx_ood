@@ -116,12 +116,12 @@ def main():
     with torch.no_grad():
         prob2, prob = [], []
         for idx, (images, labels) in enumerate(data_module.test_dataloader()):
-            images = images.float().cuda()
+            images = images.float()
             output = model(images)
             res = torch.max(torch.softmax(output, dim=-1), dim=-1).values
             prob.extend(res.cpu().numpy())
         for idx, (images, labels) in enumerate(data_module.predict_dataloader()):
-            images = images.float().cuda()
+            images = images.float()
             output = model(images)
             res2 = torch.max(torch.softmax(output, dim=-1), dim=-1).values
             prob2.extend(res2.cpu().numpy())
