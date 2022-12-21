@@ -104,13 +104,13 @@ def main():
     # trainer.fit(model, data_module)
 
     trainer.test(model, datamodule=data_module,
-                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
+                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v3.ckpt')
                        )
-    ind = model.get_results().detach().cpu()
+    ind = model.get_results()
     trainer.predict(model, datamodule=data_module,
-                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
+                       ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v3.ckpt')
                        )
-    ood = model.get_results().detach().cpu()
+    ood = model.get_results()
     print(calc_auroc(ind, ood))
 
 
