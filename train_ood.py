@@ -130,8 +130,8 @@ def main():
             res2 = torch.max(torch.softmax(output, dim=-1), dim=-1).values
             prob2.extend(res2.cpu().numpy())
     print("pass")
-    prob = numpy.concatenate(prob)
-    prob2 = numpy.concatenate(prob2)
+    prob = numpy.array(prob)
+    prob2 = numpy.array(prob2)
     print(calc_auroc(prob, prob2))
 
 
