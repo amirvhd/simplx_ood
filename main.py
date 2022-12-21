@@ -405,8 +405,8 @@ def approximation_quality(
     with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
         data_sn = pkl.load(f)
     # Load the explainer
-    latent_rep_approx = data_base.latent_approx()
-    latent_rep_true = data_base.test_latent_reps
+    latent_rep_approx = data_base.latent_approx()[:10000]
+    latent_rep_true = data_base.test_latent_reps[:10000]
     output_approx = classifier1.latent_to_presoftmax(latent_rep_approx).detach()
     output_true = classifier1.latent_to_presoftmax(latent_rep_true).detach()
     latent_r2_score = sklearn.metrics.r2_score(
@@ -418,8 +418,8 @@ def approximation_quality(
     print(
         f"base latent r2: {latent_r2_score:.2g} ; output r2 = {output_r2_score:.2g}."
     )
-    latent_rep_approx = data_sn.latent_approx()
-    latent_rep_true = data_sn.test_latent_reps
+    latent_rep_approx = data_sn.latent_approx()[:10000]
+    latent_rep_true = data_sn.test_latent_reps[:10000]
     output_approx = classifier2.latent_to_presoftmax(latent_rep_approx).detach()
     output_true = classifier2.latent_to_presoftmax(latent_rep_true).detach()
     latent_r2_score = sklearn.metrics.r2_score(
