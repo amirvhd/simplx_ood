@@ -113,18 +113,17 @@ def main():
             output = model.forward(images)
             res2 = torch.max(torch.softmax(output, dim=-1), dim=-1).values
             prob2.extend(res2.cpu().numpy())
-    print(torch.min(pdf_cifar10_base))
     prob = numpy.array(prob)
     prob2 = numpy.array(prob2)
     f_prob = numpy.zeros(10000)
     f_prob2 = numpy.zeros(10000)
 
     for i in range(10000):
-        if pdf_cifar10_base[i] < 0.1:
+        if pdf_cifar10_base[i] < 0.01:
             f_prob[i] = pdf_cifar10_base[i]
         else:
             f_prob[i] = prob[i]
-        if pdf_cifar100_base[i] < 0.1:
+        if pdf_cifar100_base[i] < 0.01:
             f_prob2[i] = pdf_cifar100_base[i]
         else:
             f_prob2[i] = prob2[i]
