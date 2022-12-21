@@ -1,6 +1,7 @@
 import numpy
 import pickle as pkl
 import matplotlib.pyplot as plt
+from sklearn.metrics import roc_auc_score
 
 
 def main():
@@ -31,6 +32,8 @@ def main():
     x_best = numpy.zeros(20000)
     x_best[:10000] = 1
     cumulative4 = numpy.cumsum(x_best)
+    print(roc_auc_score(x_best, sorted_error_base))
+    print(roc_auc_score(x_best, sorted_error_sn))
     plt.plot(cumulative, c='blue', label="Base model")
     plt.plot(cumulative2, c='green', label="Model with spectral normalization")
     plt.plot(cumulative3, c='grey', label="Random")
