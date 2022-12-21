@@ -116,7 +116,7 @@ def main():
     print("pass")
     prob = numpy.array(prob)
     prob2 = numpy.array(prob2)
-    f_prob= numpy.minimum(prob, pdf_cifar10_base)
+    f_prob= numpy.maximum(prob, pdf_cifar10_base)
     f_prob2 = numpy.maximum(prob2, pdf_cifar100_base)
     print(calc_auroc(f_prob, f_prob2))
 
