@@ -103,10 +103,10 @@ def main():
     )
     # trainer.fit(model, data_module)
 
-    ind = trainer.test(model, test_dataloader=data_module.test_dataloader(),
+    ind = trainer.test(model, datamodule=data_module,
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
                        )
-    ood = trainer.test(model, test_dataloader=data_module.predict_dataloader(),
+    ood = trainer.predict(model, datamodule=data_module,
                        ckpt_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt')
                        )
     print(ind)

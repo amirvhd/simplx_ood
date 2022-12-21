@@ -11,10 +11,7 @@ class cifar10_module(pl.LightningDataModule):
         self.data_dir = data_dir
         self.n_workers = n_workers
         self.batch_size = batch_size
-        self.train = None
-        self.val = None
-        self.test = None
-        self.predict_dataset = None
+
         mean = (0.4914, 0.4822, 0.4465)
         std = (0.2023, 0.1994, 0.2010)
 
@@ -47,7 +44,7 @@ class cifar10_module(pl.LightningDataModule):
             self.val = datasets.CIFAR10(root=self.data_dir, train=False, download=True,
                                         transform=self.data_transform_test)
         if stage == "test" or stage is None:
-            self.test = datasets.CIFAR10(root=self.data_dir, train=False, download=True,
+            self.test_dataset = datasets.CIFAR10(root=self.data_dir, train=False, download=True,
                                          transform=self.data_transform_test)
 
         if stage == "predict" or stage is None:
@@ -71,7 +68,7 @@ class cifar10_module(pl.LightningDataModule):
 
     def test_dataloader(self):
         return DataLoader(
-            self.test,
+            self.test_dataset,
             batch_size=self.batch_size,
             num_workers=self.n_workers
         )
