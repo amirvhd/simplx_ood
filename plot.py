@@ -7,7 +7,7 @@ import torch
 from ood_metrics import calc_metrics
 
 
-def calc_metrics(ind_score: numpy.ndarray, ood_score: numpy.ndarray) -> dict:
+def calc_auroc(ind_score: numpy.ndarray, ood_score: numpy.ndarray) -> dict:
     labels = [1] * len(ind_score) + [0] * len(ood_score)
     scores = numpy.hstack([ind_score, ood_score])
 
@@ -86,7 +86,7 @@ def main():
     for i in range(10000):
         pdf_cifar_base[i] = torch.exp(dist_in.log_prob(torch.tensor(error_base1[i])))
     print("done")
-    res = calc_metrics(pdf_cifar_base.numpy(), pdf_svhn_base.numpy())
+    res = calc_auroc(pdf_cifar_base.numpy(), pdf_svhn_base.numpy())
     print(res)
 
 if __name__ == "__main__":
