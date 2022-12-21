@@ -21,6 +21,7 @@ def calc_metrics(ind_score: numpy.ndarray, ood_score: numpy.ndarray) -> dict:
     }
     return metric_dict_transformed
 
+
 def main():
     # with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
     #     data_base = pkl.load(f)
@@ -88,8 +89,10 @@ def main():
     mean_base = numpy.mean(error_base1)
     std_base = numpy.var(error_base1)
     dist_in = torch.distributions.normal.Normal(loc=mean_base, scale=std_base)
-    pdf_svhn_base = dist_in.log_prob(error_base2)
-    pdf_cifar_base = dist_in.log_prob(error_base1)
-    calc_metrics(pdf_cifar_base,pdf_svhn_base)
+    pdf_svhn_base = dist_in.log_prob(torch.tensor(error_base2)).numpy()
+    pdf_cifar_base = dist_in.log_prob(torch.tensor(error_base1)).numpy()
+    calc_metrics(pdf_cifar_base, pdf_svhn_base)
+
+
 if __name__ == "__main__":
     main()
