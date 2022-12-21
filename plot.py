@@ -83,9 +83,9 @@ def main():
     pdf_svhn_base = torch.zeros(26032)
     for i in range(26032):
         pdf_svhn_base[i] = torch.exp(dist_in.log_prob(torch.tensor(error_base2[i])))
-    for i in range(10000):
-        pdf_cifar_base[i] = torch.exp(dist_in.log_prob(torch.tensor(error_base1[i])))
-    calc_metrics(pdf_cifar_base.numpy(), pdf_svhn_base.numpy())
+    # for i in range(10000):
+    #     pdf_cifar_base[i] = torch.exp(dist_in.log_prob(torch.tensor(error_base1[i])))
+    # calc_metrics(pdf_cifar_base.numpy(), pdf_svhn_base.numpy())
 
 
 if __name__ == "__main__":
