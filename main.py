@@ -64,7 +64,7 @@ def load_mnist(
 
 
 def load_svhn(
-        batch_size: int, split= "test", subset_size=None, shuffle: bool = True
+        batch_size: int, split="test", subset_size=None, shuffle: bool = True
 ) -> DataLoader:
     mean = (0.4376821, 0.4437697, 0.47280442)
     std = (0.19803012, 0.20101562, 0.19703614)
@@ -360,12 +360,8 @@ def fit_representer(
 
 
 def approximation_quality(
-        n_keep_list: list,
         cv: int = 0,
         random_seed: int = 42,
-        model_reg_factor=0.1,
-        save_path: str = "experiments/results/mnist/quality/",
-        train_only=False,
 ) -> None:
     print(
         100 * "-"
@@ -374,74 +370,67 @@ def approximation_quality(
           f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    explainers_name = ["simplex", "nn_uniform", "nn_dist", "representer"]
-
-    current_path = Path.cwd()
-    save_path = current_path / save_path
-    # Create saving directory if inexistent
-    if not save_path.exists():
-        print(f"Creating the saving directory {save_path}")
-        os.makedirs(save_path)
-
-    # Training a model, save it
-    print(100 * "-" + "\n" + "Now fitting the model. \n" + 100 * "-")
-    train_model(
-        device=device,
-        random_seed=random_seed,
-        cv=cv,
-        save_path=save_path,
-        model_reg_factor=model_reg_factor,
-    )
 
     # Load the model
-    # classifier = MnistClassifier()
-    classifier = WideResNet()
 
-    classifier.load_state_dict(torch.load(save_path / f"model_cv{cv}.pth"))
-    classifier.to(device)
-    classifier.eval()
+    classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
+    new_state_dict = {}
+    state_dict = torch.load(
+        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v1.ckpt"),
+        map_location=torch.device('cpu'))[
+        "state_dict"]
+    for k, v in state_dict.items():
+        k = k.replace("model.", "")
+        new_state_dict[k] = v
+    state_dict = new_state_dict
+    classifier1.load_state_dict(state_dict)
+    classifier1.to(device)
+    classifier1.eval()
 
-    # Fit the explainers
-    print(100 * "-" + "\n" + "Now fitting the explainers. \n" + 100 * "-")
-    for i, n_keep in enumerate(n_keep_list):
-        print(30 * "-" + f"n_keep = {n_keep}" + 30 * "-")
-        explainers = fit_explainers(
-            device=device,
-            random_seed=random_seed,
-            cv=cv,
-            test_size=100,
-            corpus_size=1000,
-            n_keep=n_keep,
-            save_path=save_path,
-            explainers_name=explainers_name,
-            train_only=train_only,
-        )
-        # Print the partial results
-        print(100 * "-" + "\n" + "Results. \n" + 100 * "-")
-        for explainer, explainer_name in zip(explainers, explainers_name[:-1]):
-            latent_rep_approx = explainer.latent_approx()
-            latent_rep_true = explainer.test_latent_reps
-            output_approx = classifier.latent_to_presoftmax(latent_rep_approx).detach()
-            output_true = classifier.latent_to_presoftmax(latent_rep_true).detach()
-            latent_r2_score = sklearn.metrics.r2_score(
-                latent_rep_true.cpu().numpy(), latent_rep_approx.cpu().numpy()
-            )
-            output_r2_score = sklearn.metrics.r2_score(
-                output_true.cpu().numpy(), output_approx.cpu().numpy()
-            )
-            print(
-                f"{explainer_name} latent r2: {latent_r2_score:.2g} ; output r2 = {output_r2_score:.2g}."
-            )
-
-    # Fit the representer explainer (this is only makes sense by using the whole corpus)
-    representer = fit_representer(model_reg_factor, save_path, cv)
-    latent_rep_true = representer.test_latent_reps
-    output_true = classifier.latent_to_presoftmax(latent_rep_true).detach()
-    output_approx = representer.output_approx()
+    new_state_dict = {}
+    state_dict = torch.load(
+        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v2.ckpt"),
+        map_location=torch.device('cpu'))[
+        "state_dict"]
+    for k, v in state_dict.items():
+        k = k.replace("model.", "")
+        new_state_dict[k] = v
+    state_dict = new_state_dict
+    classifier2 = WideResNet(spectral_conv=True, spectral_bn=True)
+    classifier2.load_state_dict(state_dict)
+    classifier2.to(device)
+    classifier2.eval()
+    with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
+        data_base = pkl.load(f)
+    with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
+        data_sn = pkl.load(f)
+    # Load the explainer
+    latent_rep_approx = data_base.latent_approx()
+    latent_rep_true = data_base.test_latent_reps
+    output_approx = classifier1.latent_to_presoftmax(latent_rep_approx).detach()
+    output_true = classifier1.latent_to_presoftmax(latent_rep_true).detach()
+    latent_r2_score = sklearn.metrics.r2_score(
+        latent_rep_true.cpu().numpy(), latent_rep_approx.cpu().numpy()
+    )
     output_r2_score = sklearn.metrics.r2_score(
         output_true.cpu().numpy(), output_approx.cpu().numpy()
     )
-    print(f"representer output r2 = {output_r2_score:.2g}.")
+    print(
+        f"base latent r2: {latent_r2_score:.2g} ; output r2 = {output_r2_score:.2g}."
+    )
+    latent_rep_approx = data_sn.latent_approx()
+    latent_rep_true = data_sn.test_latent_reps
+    output_approx = classifier2.latent_to_presoftmax(latent_rep_approx).detach()
+    output_true = classifier2.latent_to_presoftmax(latent_rep_true).detach()
+    latent_r2_score = sklearn.metrics.r2_score(
+        latent_rep_true.cpu().numpy(), latent_rep_approx.cpu().numpy()
+    )
+    output_r2_score = sklearn.metrics.r2_score(
+        output_true.cpu().numpy(), output_approx.cpu().numpy()
+    )
+    print(
+        f"SN latent r2: {latent_r2_score:.2g} ; output r2 = {output_r2_score:.2g}."
+    )
 
 
 def influence_function(
@@ -630,7 +619,7 @@ def outlier_detection(
     corpus_loader = load_cifar10(batch_size=1000, train=True)
     cifar10_test_loader = load_cifar10(batch_size=1000, train=False)
     cifar100_test_loader = load_cifar100(batch_size=1000, train=False)
-    svhn_test_loader = load_svhn(batch_size=1000,split="test")
+    svhn_test_loader = load_svhn(batch_size=1000, split="test")
     corpus_latent_reps1 = []
     corpus_latent_reps2 = []
     corpus_features = []
