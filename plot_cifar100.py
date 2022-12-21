@@ -116,9 +116,18 @@ def main():
     print("pass")
     prob = numpy.array(prob)
     prob2 = numpy.array(prob2)
+    f_prob = numpy.zeros(10000)
+    f_prob2 = numpy.zeros(10000)
+    for i in range(10000):
+        if pdf_cifar10_base < 0.2:
+            f_prob[i] = pdf_cifar10_base[i]
+        else:
+            f_prob[i] = prob[i]
+        if pdf_cifar10_base < 0.2:
+            f_prob2[i] = pdf_cifar100_base[i]
+        else:
+            f_prob2[i] = prob2[i]
 
-    f_prob= numpy.mean((prob, pdf_cifar10_base))
-    f_prob2 = numpy.mean((prob2, pdf_cifar100_base))
     print(calc_auroc(f_prob, f_prob2))
 
 
