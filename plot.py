@@ -2,7 +2,7 @@ import numpy
 import pickle as pkl
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score
-import torch
+
 
 def main():
     # with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
@@ -22,16 +22,16 @@ def main():
     with open('./experiments/results/cifar/outlier_sn/simplex_svhn2_cv0.pkl', 'rb') as f:
         data_sn2 = pkl.load(f)
     pred_base1 = data_base1.latent_approx()
-    error_base1 = ((data_base1.test_latent_reps - pred_base1) ** 2).sum(1).cpu()
+    error_base1 = ((data_base1.test_latent_reps - pred_base1) ** 2).sum(1).cpu().numpy()
     pred_sn1 = data_sn1.latent_approx()
-    error_sn1 = ((data_sn1.test_latent_reps - pred_sn1) ** 2).sum(1).cpu()
+    error_sn1 = ((data_sn1.test_latent_reps - pred_sn1) ** 2).sum(1).cpu().numpy()
     pred_base2 = data_base2.latent_approx()
-    error_base2 = ((data_base2.test_latent_reps - pred_base2) ** 2).sum(1).cpu()
+    error_base2 = ((data_base2.test_latent_reps - pred_base2) ** 2).sum(1).cpu().numpy()
     pred_sn2 = data_sn2.latent_approx()
-    error_sn2 = ((data_sn2.test_latent_reps - pred_sn2) ** 2).sum(1).cpu()
+    error_sn2 = ((data_sn2.test_latent_reps - pred_sn2) ** 2).sum(1).cpu().numpy()
     print(error_base1.shape)
-    error_base = torch.cat(error_base1, error_base2)
-    error_sn = numpy.concatenate(error_sn1, error_sn2)
+    error_base = numpy.concatenate((error_base1, error_base2))
+    error_sn = numpy.concatenate((error_sn1, error_sn2))
     sorted_error_base = numpy.flip(numpy.argsort(error_base))
     sorted_error_base[sorted_error_base <= 10000] = 0
     sorted_error_base[sorted_error_base > 10000] = 1
