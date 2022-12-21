@@ -89,7 +89,6 @@ class classifier_module(pl.LightningModule):
                 predictions.append(out_predictions)
 
         labels = torch.stack(labels).int()
-        self.labels = labels
         predictions = torch.stack(predictions)
         probs = torch.nn.functional.softmax(predictions, dim=-1)
         acc = accuracy(probs, labels, num_classes=self.n_cls)
@@ -99,19 +98,15 @@ class classifier_module(pl.LightningModule):
         return max_probs
 
     def predict_epoch_end(self, outputs):
-        labels = self.labels
+
         predictions = []
         for output in outputs:
-
             for out_predictions in output["predictions"].detach().cpu():
                 predictions.append(out_predictions)
 
         predictions = torch.stack(predictions)
         probs = torch.nn.functional.softmax(predictions, dim=-1)
-        acc = accuracy(probs, labels, num_classes=self.n_cls)
         max_probs = torch.max(probs, dim=-1).values.cpu().numpy()
-
-        self.log("test_acc", acc, prog_bar=True, logger=True)
         return max_probs
 
     def configure_optimizers(self):
