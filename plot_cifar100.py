@@ -113,7 +113,7 @@ def main():
             output = model.forward(images)
             res2 = torch.max(torch.softmax(output, dim=-1), dim=-1).values
             prob2.extend(res2.cpu().numpy())
-    print("pass")
+    print(numpy.min(pdf_cifar10_base))
     prob = numpy.array(prob)
     prob2 = numpy.array(prob2)
     f_prob = numpy.zeros(10000)
