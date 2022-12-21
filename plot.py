@@ -2,7 +2,24 @@ import numpy
 import pickle as pkl
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score
+import torch
 
+from ood_metrics import calc_metrics
+
+
+def calc_metrics(ind_score: numpy.ndarray, ood_score: numpy.ndarray) -> dict:
+    labels = [1] * len(ind_score) + [0] * len(ood_score)
+    scores = numpy.hstack([ind_score, ood_score])
+
+    metric_dict = calc_metrics(scores, labels)
+    # fpr, tpr, _ = roc_curve(labels, scores)
+
+    metric_dict_transformed = {
+        "AUROC": 100 * metric_dict["auroc"],
+        #    "TNR at TPR 95%": 100 * (1 - metric_dict["fpr_at_95_tpr"]),
+        #   "Detection Acc.": 100 * 0.5 * (tpr + 1 - fpr).max(),
+    }
+    return metric_dict_transformed
 
 def main():
     # with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
@@ -68,7 +85,11 @@ def main():
     # fig = plt.figure()
     # plt.imshow(data, cmap="gray", interpolation="none")
     #
-
-
+    mean_base = numpy.mean(error_base1)
+    std_base = numpy.var(error_base1)
+    dist_in = torch.distributions.normal.Normal(loc=mean_base, scale=std_base)
+    pdf_svhn_base = dist_in.log_prob(error_base2)
+    pdf_cifar_base = dist_in.log_prob(error_base1)
+    calc_metrics(pdf_cifar_base,pdf_svhn_base)
 if __name__ == "__main__":
     main()
