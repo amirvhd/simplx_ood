@@ -19,15 +19,16 @@ class classifier_module(pl.LightningModule):
         self.model = WideResNet(dropout_rate=self.drop)
         self.criterion = nn.CrossEntropyLoss()
 
-    def forward(self, images, labels):
+    def forward(self, images):
         # images = self.upsample(images)
         output = self.model(images)
-        loss = self.criterion(output, labels)
-        return loss, output
+
+        return output
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        loss, outputs = self.forward(x, y)
+        outputs = self.forward(x, y)
+        loss = self.criterion(outputs, y)
         self.log("train_loss", loss, prog_bar=True, logger=True)
         return {"loss": loss, "predictions": outputs.detach(), "labels": y}
 
@@ -52,7 +53,8 @@ class classifier_module(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
-        loss, outputs = self.forward(x, y)
+        outputs = self.forward(x, y)
+        loss = self.criterion(outputs, y)
         self.log("val_loss", loss, prog_bar=True, logger=True)
         return {"val_loss": loss, "predictions": outputs.detach(), "labels": y}
 
@@ -75,7 +77,8 @@ class classifier_module(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         x, y = batch
-        loss, outputs = self.forward(x, y)
+        outputs = self.forward(x, y)
+        loss = self.criterion(outputs, y)
         self.log("test_loss", loss, prog_bar=True, logger=True)
         return {"loss": loss, "predictions": outputs.detach(), "labels": y}
 
@@ -97,10 +100,6 @@ class classifier_module(pl.LightningModule):
         self.log("test_acc", acc, prog_bar=True, logger=True)
         return max_probs
 
-    def predict_step(self, batch, batch_idx):
-        x, y = batch
-        _, outputs = self.forward(x, y)
-        return {"predictions": outputs.detach()}
 
     def predict_epoch_end(self, outputs):
 
