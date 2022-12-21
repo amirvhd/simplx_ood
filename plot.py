@@ -5,14 +5,32 @@ from sklearn.metrics import roc_auc_score
 
 
 def main():
-    with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
-        data_base = pkl.load(f)
-    with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
-        data_sn = pkl.load(f)
-    pred_base = data_base.latent_approx()
-    error_base = ((data_base.test_latent_reps - pred_base) ** 2).sum(1).cpu().numpy()
-    pred_sn = data_sn.latent_approx()
-    error_sn = ((data_sn.test_latent_reps - pred_sn) ** 2).sum(1).cpu().numpy()
+    # with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
+    #     data_base = pkl.load(f)
+    # with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
+    #     data_sn = pkl.load(f)
+    # pred_base = data_base.latent_approx()
+    # error_base = ((data_base.test_latent_reps - pred_base) ** 2).sum(1).cpu().numpy()
+    # pred_sn = data_sn.latent_approx()
+    # error_sn = ((data_sn.test_latent_reps - pred_sn) ** 2).sum(1).cpu().numpy()
+    with open('./experiments/results/cifar/outlier/simplex_svhn1_cv0.pkl', 'rb') as f:
+        data_base1 = pkl.load(f)
+    with open('./experiments/results/cifar/outlier_sn/simplex_svhn1_cv0.pkl', 'rb') as f:
+        data_sn1 = pkl.load(f)
+    with open('./experiments/results/cifar/outlier/simplex_svhn2_cv0.pkl', 'rb') as f:
+        data_base2 = pkl.load(f)
+    with open('./experiments/results/cifar/outlier_sn/simplex_svhn2_cv0.pkl', 'rb') as f:
+        data_sn2 = pkl.load(f)
+    pred_base1 = data_base1.latent_approx()
+    error_base1 = ((data_base1.test_latent_reps - pred_base1) ** 2).sum(1).cpu().numpy()
+    pred_sn1 = data_sn1.latent_approx()
+    error_sn1 = ((data_sn1.test_latent_reps - pred_sn1) ** 2).sum(1).cpu().numpy()
+    pred_base2 = data_base2.latent_approx()
+    error_base2 = ((data_base2.test_latent_reps - pred_base2) ** 2).sum(1).cpu().numpy()
+    pred_sn2 = data_sn2.latent_approx()
+    error_sn2 = ((data_sn2.test_latent_reps - pred_sn2) ** 2).sum(1).cpu().numpy()
+    error_base = numpy.concatenate(error_base1, error_base2)
+    error_sn = numpy.concatenate(error_sn1,error_sn2)
     sorted_error_base = numpy.flip(numpy.argsort(error_base))
     sorted_error_base[sorted_error_base <= 10000] = 0
     sorted_error_base[sorted_error_base > 10000] = 1
@@ -38,11 +56,11 @@ def main():
     plt.plot(cumulative2, c='green', label="Model with spectral normalization")
     plt.plot(cumulative3, c='grey', label="Random")
     plt.plot(cumulative4, c='brown', label="Maximal")
-    plt.title("CIFAR100-ood-detection")
+    plt.title("SVHN100-ood-detection")
     plt.xlabel("Number of images inspected")
-    plt.ylabel("Number of CIFAR100 detected")
+    plt.ylabel("Number of SVHN detected")
     plt.legend(loc="lower right")
-    plt.savefig('cifar100_cifar10.png')
+    plt.savefig('SVHN_cifar10.png')
     # fig = plt.figure()
     # plt.imshow(data, cmap="gray", interpolation="none")
     #
