@@ -602,7 +602,7 @@ def outlier_detection(
     # classifier1.load_state_dict(torch.load(os.path.join(save_path1, f"model_cv{cv}.pth")))
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint.ckpt"),
+        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v1.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
@@ -615,7 +615,7 @@ def outlier_detection(
     save_path2 = current_path / "experiments/results/cifar/outlier_sn/"
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v6.ckpt"),
+        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v2.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
@@ -631,8 +631,8 @@ def outlier_detection(
     # Load data:
     corpus_loader = load_cifar10(batch_size=1000, train=True)
     cifar10_test_loader = load_cifar10(batch_size=1000, train=False)
-    # cifar100_test_loader = load_cifar100(batch_size=1000, train=False)
-    svhn_test_loader = load_svhn(batch_size=1000,split="test")
+    cifar100_test_loader = load_cifar100(batch_size=1000, train=False)
+    # svhn_test_loader = load_svhn(batch_size=1000,split="test")
     corpus_latent_reps1 = []
     corpus_latent_reps2 = []
     corpus_features = []
@@ -657,66 +657,66 @@ def outlier_detection(
     cifar10_test_latent_reps1 = torch.cat(cifar10_test_latent_reps1, dim=0).to(device).detach()
     cifar10_test_latent_reps2 = torch.cat(cifar10_test_latent_reps2, dim=0).to(device).detach()
 
-    # cifar100_test_features = []
-    # cifar100_test_latent_reps1 = []
-    # cifar100_test_latent_reps2 = []
-    # for i, (cifar100_test_feature, _) in enumerate(cifar100_test_loader):
-    #     cifar100_test_features.append(cifar100_test_feature)
-    #     cifar100_test_latent_reps1.append(
-    #         classifier1.latent_representation(cifar100_test_feature.to(device).detach()).detach())
-    #     cifar100_test_latent_reps2.append(
-    #         classifier2.latent_representation(cifar100_test_feature.to(device).detach()).detach())
-    # cifar100_test_features = torch.cat(cifar100_test_features, dim=0).to(device).detach()
-    # cifar100_test_latent_reps1 = torch.cat(cifar100_test_latent_reps1, dim=0).to(device).detach()
-    # cifar100_test_latent_reps2 = torch.cat(cifar100_test_latent_reps2, dim=0).to(device).detach()
+    cifar100_test_features = []
+    cifar100_test_latent_reps1 = []
+    cifar100_test_latent_reps2 = []
+    for i, (cifar100_test_feature, _) in enumerate(cifar100_test_loader):
+        cifar100_test_features.append(cifar100_test_feature)
+        cifar100_test_latent_reps1.append(
+            classifier1.latent_representation(cifar100_test_feature.to(device).detach()).detach())
+        cifar100_test_latent_reps2.append(
+            classifier2.latent_representation(cifar100_test_feature.to(device).detach()).detach())
+    cifar100_test_features = torch.cat(cifar100_test_features, dim=0).to(device).detach()
+    cifar100_test_latent_reps1 = torch.cat(cifar100_test_latent_reps1, dim=0).to(device).detach()
+    cifar100_test_latent_reps2 = torch.cat(cifar100_test_latent_reps2, dim=0).to(device).detach()
 
-    svhn_test_features = []
-    svhn_test_latent_reps1 = []
-    svhn_test_latent_reps2 = []
-    for i, (svhn_test_feature, _) in enumerate(svhn_test_loader):
-        svhn_test_features.append(svhn_test_feature)
-        svhn_test_latent_reps1.append(
-            classifier1.latent_representation(svhn_test_feature.to(device).detach()).detach())
-        svhn_test_latent_reps2.append(
-            classifier2.latent_representation(svhn_test_feature.to(device).detach()).detach())
-    svhn_test_features = torch.cat(svhn_test_features, dim=0).to(device).detach()
-    svhn_test_latent_reps1 = torch.cat(svhn_test_latent_reps1, dim=0).to(device).detach()
-    svhn_test_latent_reps2 = torch.cat(svhn_test_latent_reps2, dim=0).to(device).detach()
+    # svhn_test_features = []
+    # svhn_test_latent_reps1 = []
+    # svhn_test_latent_reps2 = []
+    # for i, (svhn_test_feature, _) in enumerate(svhn_test_loader):
+    #     svhn_test_features.append(svhn_test_feature)
+    #     svhn_test_latent_reps1.append(
+    #         classifier1.latent_representation(svhn_test_feature.to(device).detach()).detach())
+    #     svhn_test_latent_reps2.append(
+    #         classifier2.latent_representation(svhn_test_feature.to(device).detach()).detach())
+    # svhn_test_features = torch.cat(svhn_test_features, dim=0).to(device).detach()
+    # svhn_test_latent_reps1 = torch.cat(svhn_test_latent_reps1, dim=0).to(device).detach()
+    # svhn_test_latent_reps2 = torch.cat(svhn_test_latent_reps2, dim=0).to(device).detach()
 
-    # test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, cifar100_test_latent_reps1], dim=0)
-    # test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, cifar100_test_latent_reps2], dim=0)
-    # test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
+    test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, cifar100_test_latent_reps1], dim=0)
+    test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, cifar100_test_latent_reps2], dim=0)
+    test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
 
-    test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, svhn_test_latent_reps1], dim=0)
-    test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, svhn_test_latent_reps2], dim=0)
-    test_features = torch.cat([cifar10_test_features, svhn_test_features], dim=0)
+    # test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, svhn_test_latent_reps1], dim=0)
+    # test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, svhn_test_latent_reps2], dim=0)
+    # test_features = torch.cat([cifar10_test_features, svhn_test_features], dim=0)
 
     # Fit corpus:
-    # simplex1 = Simplex(
-    #     corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps1
-    # )
-    # simplex1.fit(
-    #     test_examples=test_features,
-    #     test_latent_reps=test_latent_reps1[10000:],
-    #     n_epoch=n_epoch_simplex,
-    #     reg_factor=0,
-    #     n_keep=corpus_features.shape[0],
-    # )
-    # explainer_path = save_path1 / f"simplex_svhn2_cv{cv}.pkl"
-    # with open(explainer_path, "wb") as f:
-    #     print(f"Saving simplex decomposition in {explainer_path}.")
-    #     pkl.dump(simplex1, f)
+    simplex1 = Simplex(
+        corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps1
+    )
+    simplex1.fit(
+        test_examples=test_features,
+        test_latent_reps=test_latent_reps1[:1000],
+        n_epoch=n_epoch_simplex,
+        reg_factor=0,
+        n_keep=corpus_features.shape[0],
+    )
+    explainer_path = save_path1 / f"simplex_t2_cv{cv}.pkl"
+    with open(explainer_path, "wb") as f:
+        print(f"Saving simplex decomposition in {explainer_path}.")
+        pkl.dump(simplex1, f)
     simplex2 = Simplex(
         corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps2
     )
     simplex2.fit(
         test_examples=test_features,
-        test_latent_reps=test_latent_reps2[10000:],
+        test_latent_reps=test_latent_reps2[:1000],
         n_epoch=n_epoch_simplex,
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path2 / f"simplex_svhn2_cv{cv}.pkl"
+    explainer_path = save_path2 / f"simplex_t2_cv{cv}.pkl"
     # explainer_path = "/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/cifar/outlier_sn/"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
