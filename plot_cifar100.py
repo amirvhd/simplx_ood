@@ -122,11 +122,11 @@ def main():
     print(numpy.max(error_sn[10000:]))
     print(numpy.mean(error_sn[10000:]))
     for i in range(10000):
-        if error_sn[i] > numpy.quantile(error_sn[:10000], 0.9):
+        if error_sn[i] > numpy.quantile(error_sn[:10000], 0.95):
             f_prob[i] = 0
         else:
             f_prob[i] = prob[i]
-        if error_sn[10000 + i] > numpy.quantile(error_sn[:10000], 0.9):
+        if error_sn[10000 + i] > numpy.quantile(error_sn[:10000], 0.95):
             f_prob2[i] = 0
         else:
             f_prob2[i] = prob2[i]
