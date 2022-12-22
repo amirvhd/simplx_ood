@@ -122,14 +122,14 @@ def main():
     print(numpy.max(error_sn[10000:]))
     print(numpy.mean(error_sn[10000:]))
     for i in range(10000):
-        if error_sn[i] > numpy.mean(error_sn[:10000]) and pdf_cifar10_sn[i] < 0.1:
-            f_prob[i] = pdf_cifar10_sn[i]
+        if error_sn[i] > numpy.quantile(error_sn[:10000], 0.9):
+            f_prob[i] = 0
         else:
-            f_prob[i] = prob[i]
-        if error_sn[10000 + i] > numpy.mean(error_sn[:10000]) and pdf_cifar100_sn[i] < 0.1:
+            f_prob[i] = 1
+        if error_sn[10000 + i] > numpy.quantile(error_sn[:10000], 0.9):
             f_prob2[i] = 0
         else:
-            f_prob2[i] = prob2[i]
+            f_prob2[i] = 1
 
     print(calc_auroc(f_prob, f_prob2))
 
