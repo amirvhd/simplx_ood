@@ -69,10 +69,10 @@ def main():
 
     mean_base = numpy.mean(error_base[:10000])
     std_base = numpy.std(error_base[:10000])
-    dist_in_base = torch.distributions.log_normal.LogNormal(loc=mean_base, scale=std_base)
+    dist_in_base = torch.distributions.normal.Normal(loc=mean_base, scale=std_base)
     mean_sn = numpy.mean(error_sn[:10000])
     std_sn = numpy.std(error_sn[:10000])
-    dist_in_sn = torch.distributions.log_normal.LogNormal(loc=mean_sn, scale=std_sn)
+    dist_in_sn = torch.distributions.normal.Normal(loc=mean_sn, scale=std_sn)
     pdf_cifar10_base = torch.zeros(10000)
     pdf_cifar100_base = torch.zeros(10000)
     pdf_cifar10_sn = torch.zeros(10000)
@@ -122,11 +122,11 @@ def main():
     print(numpy.max(error_sn[10000:]))
     print(numpy.mean(error_sn[10000:]))
     for i in range(10000):
-        if error_sn[i] > numpy.quantile(error_sn[:10000], 0.9):
-            f_prob[i] = 0
+        if error_sn[i] > numpy.mean(error_sn[:10000]) & pdf_cifar10_sn[i] < 0.1:
+            f_prob[i] = pdf_cifar10_sn[i]
         else:
             f_prob[i] = prob[i]
-        if error_sn[10000 + i] > numpy.quantile(error_sn[:10000], 0.9):
+        if error_sn[10000 + i] > numpy.mean(error_sn[:10000]) & pdf_cifar100_sn[i] < 0.1:
             f_prob2[i] = 0
         else:
             f_prob2[i] = prob2[i]
