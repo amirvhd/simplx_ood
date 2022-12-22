@@ -117,14 +117,16 @@ def main():
     prob2 = numpy.array(prob2)
     f_prob = numpy.zeros(10000)
     f_prob2 = numpy.zeros(10000)
-    print(numpy.mean(error_sn[:10000]))
+    print(numpy.quantile(error_sn[:10000], 0.9))
     print(numpy.max(error_sn[:10000]))
-    print(numpy.min(error_sn[10000:]))
-
+    print(numpy.max(error_sn[10000:]))
+    print(numpy.mean(error_sn[10000:]))
     for i in range(10000):
-
-        f_prob[i] = prob[i]
-        if error_sn[10000+i] > numpy.max(error_sn[:10000]):
+        if error_sn[i] > numpy.quantile(error_sn[:10000], 0.9):
+            f_prob[i] = 0
+        else:
+            f_prob[i] = prob[i]
+        if error_sn[10000 + i] > numpy.quantile(error_sn[:10000], 0.9):
             f_prob2[i] = 0
         else:
             f_prob2[i] = prob2[i]
