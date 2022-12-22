@@ -117,7 +117,10 @@ def main():
     prob2 = numpy.array(prob2)
     f_prob = numpy.zeros(10000)
     f_prob2 = numpy.zeros(10000)
-
+    print(mean_base)
+    print(std_base)
+    print(mean_sn)
+    print(std_sn)
     for i in range(10000):
         if pdf_cifar10_sn[i] < 0.1:
             f_prob[i] = pdf_cifar10_sn[i]
