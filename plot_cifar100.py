@@ -124,7 +124,7 @@ def main():
         else:
             f_prob[i] = prob[i]
         if pdf_cifar100_sn[i] < 0.1:
-            f_prob2[i] = pdf_cifar100_sn
+            f_prob2[i] = pdf_cifar100_sn[i]
         else:
             f_prob2[i] = prob2[i]
 
