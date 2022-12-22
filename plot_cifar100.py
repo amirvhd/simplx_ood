@@ -123,11 +123,11 @@ def main():
     print(numpy.mean(error_sn[10000:]))
     for i in range(10000):
         if error_sn[i] > numpy.quantile(error_sn[:10000], 0.50):
-            f_prob[i] = (pdf_cifar10_sn+prob[i])/2
+            f_prob[i] = (pdf_cifar10_sn[i]+prob[i])/2
         else:
             f_prob[i] = prob[i]
         if error_sn[10000 + i] > numpy.quantile(error_sn[:10000], 0.50):
-            f_prob2[i] = (pdf_cifar100_sn+prob2[i])/2
+            f_prob2[i] = (pdf_cifar100_sn[i]+prob2[i])/2
         else:
             f_prob2[i] = prob2[i]
 
