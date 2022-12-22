@@ -125,11 +125,11 @@ def main():
         if error_sn[i] > numpy.quantile(error_sn[:10000], 0.9):
             f_prob[i] = 0
         else:
-            f_prob[i] = 1
+            f_prob[i] = prob[i]
         if error_sn[10000 + i] > numpy.quantile(error_sn[:10000], 0.9):
             f_prob2[i] = 0
         else:
-            f_prob2[i] = 1
+            f_prob2[i] = prob2[i]
 
     print(calc_auroc(f_prob, f_prob2))
 
