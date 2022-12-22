@@ -58,9 +58,9 @@ def calc_auroc(ind_score: numpy.ndarray, ood_score: numpy.ndarray) -> dict:
 
 
 def main():
-    with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/outlier/simplex_t2_cv0.pkl', 'rb') as f:
         data_base = pkl.load(f)
-    with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/outlier_sn/simplex_t2_cv0.pkl', 'rb') as f:
         data_sn = pkl.load(f)
     pred_base = data_base.latent_approx()
     error_base = ((data_base.test_latent_reps - pred_base) ** 2).sum(1).cpu().numpy()
@@ -97,7 +97,7 @@ def main():
     model = classifier_module(
         n_classes=opt.n_cls, lr=opt.lr, wd=opt.wd, n_layers=opt.n_freeze_layers
     )
-    model = model.load_from_checkpoint(checkpoint_path=os.path.join(opt.model_path, 'best-checkpoint-v6.ckpt'))
+    model = model.load_from_checkpoint(checkpoint_path=os.path.join(opt.model_path, 'best-checkpoint-v2.ckpt'))
     model.cuda()
     with torch.no_grad():
         prob2, prob = [], []
