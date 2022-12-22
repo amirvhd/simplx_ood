@@ -117,7 +117,8 @@ def main():
     prob2 = numpy.array(prob2)
     f_prob = numpy.zeros(10000)
     f_prob2 = numpy.zeros(10000)
-    print(numpy.min(error_sn[:10000]))
+    print(numpy.mean(error_sn[:10000]))
+    print(numpy.max(error_sn[:10000]))
     print(numpy.min(error_sn[10000:]))
 
     for i in range(10000):
