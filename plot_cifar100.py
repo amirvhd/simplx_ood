@@ -119,12 +119,12 @@ def main():
     f_prob2 = numpy.zeros(10000)
 
     for i in range(10000):
-        if pdf_cifar10_base[i] < 0.01:
-            f_prob[i] = pdf_cifar10_base[i]
+        if pdf_cifar10_base[i] < 0.2:
+            f_prob[i] = 0.2*pdf_cifar10_base[i]+0.8*prob[i]
         else:
             f_prob[i] = prob[i]
-        if pdf_cifar100_base[i] < 0.01:
-            f_prob2[i] = pdf_cifar100_base[i]
+        if pdf_cifar100_base[i] < 0.2:
+            f_prob2[i] = 0.2*pdf_cifar100_base[i]+0.8*prob2[i]
         else:
             f_prob2[i] = prob2[i]
 
