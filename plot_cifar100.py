@@ -132,7 +132,12 @@ def main():
             f_prob2[i] = prob2[i]
 
     print(calc_auroc(f_prob, f_prob2))
-
+    plt.hist(error_sn[:10000], density=True, bins=30)
+    plt.hist(error_sn[10000:], density=True, bins=30)
+    plt.savefig('hist_distance.png')
+    plt.hist(prob[:10000], density=True, bins=30)
+    plt.hist(prob2[:10000], density=True, bins=30)
+    plt.savefig('hist_prob.png')
 
 if __name__ == "__main__":
     main()
