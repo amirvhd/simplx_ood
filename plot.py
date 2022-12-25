@@ -70,11 +70,10 @@ def main():
     plt.plot(cumulative2, c='green', label="Model with spectral normalization")
     plt.plot(cumulative3, c='grey', label="Random")
     plt.plot(cumulative4, c='brown', label="Maximal")
-    plt.title("SVHN100-ood-detection")
     plt.xlabel("Number of images inspected")
     plt.ylabel("Number of SVHN detected")
     plt.legend(loc="lower right")
-    plt.savefig('SVHN_cifar10.png')
+    plt.savefig('SVHN_cifar10.pdf, format = ”pdf”')
 
     mean_base = numpy.mean(error_base1)
     std_base = numpy.std(error_base1)
