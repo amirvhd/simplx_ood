@@ -73,7 +73,7 @@ def main():
     plt.xlabel("Number of images inspected")
     plt.ylabel("Number of SVHN detected")
     plt.legend(loc="lower right")
-    plt.savefig('SVHN_cifar10.pdf, format = ”pdf”')
+    plt.savefig('SVHN_cifar10.pdf', format = "pdf")
 
     mean_base = numpy.mean(error_base1)
     std_base = numpy.std(error_base1)
