@@ -1,25 +1,10 @@
 import numpy
 import pickle as pkl
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_auc_score
-import torch
-
-from ood_metrics import calc_metrics
 
 
-def calc_auroc(ind_score: numpy.ndarray, ood_score: numpy.ndarray) -> dict:
-    labels = [1] * len(ind_score) + [0] * len(ood_score)
-    scores = numpy.hstack([ind_score, ood_score])
 
-    metric_dict = calc_metrics(scores, labels)
-    # fpr, tpr, _ = roc_curve(labels, scores)
 
-    metric_dict_transformed = {
-        "AUROC": 100 * metric_dict["auroc"],
-        #    "TNR at TPR 95%": 100 * (1 - metric_dict["fpr_at_95_tpr"]),
-        #   "Detection Acc.": 100 * 0.5 * (tpr + 1 - fpr).max(),
-    }
-    return metric_dict_transformed
 
 
 def main():
@@ -64,8 +49,6 @@ def main():
     x_best = numpy.zeros(20000)
     x_best[:10000] = 1
     cumulative4 = numpy.cumsum(x_best)
-    print(roc_auc_score(x_best, sorted_error_base))
-    print(roc_auc_score(x_best, sorted_error_sn))
     plt.plot(cumulative, c='blue', label="Base model")
     plt.plot(cumulative2, c='green', label="Model with spectral normalization")
     plt.plot(cumulative3, c='grey', label="Random")
@@ -75,22 +58,7 @@ def main():
     plt.legend(loc="lower right")
     plt.savefig('CIFAR_cifar10.pdf', format = "pdf")
 
-    # mean_base = numpy.mean(error_base1)
-    # std_base = numpy.std(error_base1)
-    # dist_in = torch.distributions.normal.Normal(loc=mean_base, scale=std_base)
-    # pdf_cifar_base = torch.zeros(10000)
-    # pdf_svhn_base = torch.zeros(26032)
-    # pdf_cifar_sn = torch.zeros(10000)
-    # pdf_svhn_sn = torch.zeros(26032)
-    # for i in range(26032):
-    #     pdf_svhn_base[i] = torch.exp(dist_in.log_prob(torch.tensor(error_base2[i])))
-    #     pdf_svhn_sn[i] = torch.exp(dist_in.log_prob(torch.tensor(error_sn2[i])))
-    # for i in range(10000):
-    #     pdf_cifar_base[i] = torch.exp(dist_in.log_prob(torch.tensor(error_base1[i])))
-    #     pdf_cifar_sn[i] = torch.exp(dist_in.log_prob(torch.tensor(error_sn1[i])))
-    # res = calc_auroc(pdf_cifar_base.numpy(), pdf_svhn_base.numpy())
-    # res_sn = calc_auroc(pdf_cifar_sn.numpy(), pdf_svhn_sn.numpy())
-    # print(res_sn)
+
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,7 @@
 # SN-SimplEx
 
 This repository is for the Explaining latent representation of distance-aware model. This repository is based on the
-[SimplEx](https://github.com/JonathanCrabbe/Simplex) repository. The original SImplEx is taken from the original code.
+[SimplEx](https://github.com/JonathanCrabbe/Simplex) repository. The original SimplEx is taken from the original code.
 
 ## Table of contents
 
