@@ -87,6 +87,7 @@ def load_cifar100(
 
 def approximation_quality(
         random_seed: int = 42,
+        model_path: str = "experiments/results/"
 ) -> None:
     print(
         100 * "-"
@@ -101,7 +102,7 @@ def approximation_quality(
     classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v1.ckpt"),
+        os.path.join(model_path, "best-checkpoint-v1.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
@@ -114,7 +115,7 @@ def approximation_quality(
 
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v2.ckpt"),
+        os.path.join(model_path, "best-checkpoint-v2.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
@@ -164,7 +165,7 @@ def ood_detection(
         ood: str = "CIFAR100",
         random_seed: int = 42,
         save_path: str = "experiments/results/cifar/ood/",
-        train: bool = False,
+        model_path: str = "experiments/results/",
 ) -> None:
     torch.random.manual_seed(random_seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -190,7 +191,7 @@ def ood_detection(
     classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join(save_path1, "best-checkpoint-v1.ckpt"),
+        os.path.join(model_path, "best-checkpoint-v1.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
@@ -204,7 +205,7 @@ def ood_detection(
     save_path2 = current_path / "experiments/results/cifar/ood_sn/"
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join(save_path2, "best-checkpoint-v2.ckpt"),
+        os.path.join(model_path, "best-checkpoint-v2.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
