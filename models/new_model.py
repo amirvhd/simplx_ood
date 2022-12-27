@@ -1,5 +1,5 @@
-# Follows:
-# https://github.com/szagoruyko/wide-residual-networks/tree/master/pytorch
+# This code is taken fro wide-resent 28-10 from following repository
+# https://github.com/y0ast/DUE
 
 import torch.nn as nn
 import torch.nn.functional as F

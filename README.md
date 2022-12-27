@@ -45,7 +45,7 @@ pip install - r requirements.txt
 
 ### Image classification
 
-To run the CIFAR10 base line imgae classification you need to run the following :
+To run the CIFAR10 baseline image classification you need to run the following code:
 
 ```python
 python train.py --bn --sn
@@ -53,7 +53,7 @@ python train.py --bn --sn
 
 ### Approximation quality
 
-You can run the following code to get results for precision fo corpus decomposition for trained model from previous step.
+You can run the following code to get results for precision of corpus decomposition for trained model from previous step.
 
 ```python
 python main.py -experiment approximation_quality
@@ -65,7 +65,7 @@ python main.py -experiment approximation_quality
 
 ### Out of distribution detection
 
-You can run the following codes to get fitted simplEx for out-of-distribution detection for CIFAR100 and SVHN.
+You can run the following codes to fit SimplEx for out-of-distribution detection of CIFAR100 and SVHN.
 
 
 ```python
@@ -73,7 +73,7 @@ python main.py -experiment ood_detection --ood_dataset CIFAR100
 python main.py -experiment ood_detection --ood_dataset SVHN
 
 ```
-To get errors and plots for out-of-ditribtuionn detection. you can run the follwoing code
+To get errors and plots for out-of-distribution detection. you can run the following code:
 
 ```python
 python plot.py  --ood_dataset CIFAR100

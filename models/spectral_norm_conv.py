@@ -7,6 +7,9 @@ Based on: Regularisation of Neural Networks by Enforcing Lipschitz Continuity
     (Gouk et al. 2018)
     https://arxiv.org/abs/1804.04368
 """
+# This code is taken fro wide-resent 28-10 from following repository
+# https://github.com/y0ast/DUE
+
 import torch
 from torch.nn.functional import normalize, conv_transpose2d, conv2d
 from torch.nn.utils.spectral_norm import (

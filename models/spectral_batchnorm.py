@@ -1,3 +1,5 @@
+# This code is taken fro wide-resent 28-10 from following repository
+# https://github.com/y0ast/DUE
 import torch
 from torch import Tensor
 from torch.nn import functional as F

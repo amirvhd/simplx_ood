@@ -3,6 +3,8 @@ Spectral Normalization from https://arxiv.org/abs/1802.05957
 
 with additional variable `coeff` or max spectral norm.
 """
+# This code is taken fro wide-resent 28-10 from following repository
+# https://github.com/y0ast/DUE
 import torch
 from torch.nn.functional import normalize
 from torch.nn.utils.spectral_norm import (
