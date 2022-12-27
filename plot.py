@@ -1,11 +1,15 @@
 import numpy
 import pickle as pkl
 import matplotlib.pyplot as plt
+import argparse
 
+def parse_option():
+    parser = argparse.ArgumentParser('argument for training')
+    parser.add_argument('--ood_dataset', type=str, default='cifar100',
+                        choices=['cifar100', 'svhn'], help='dataset')
 
-
-
-
+    opt = parser.parse_args()
+    return opt
 
 def main():
     with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:

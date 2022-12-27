@@ -16,7 +16,6 @@ from models.new_model import WideResNet
 # Load data
 
 
-
 def load_svhn(
         batch_size: int, split="test", subset_size=None, shuffle: bool = True
 ) -> DataLoader:
@@ -87,14 +86,13 @@ def load_cifar100(
 
 
 def approximation_quality(
-        cv: int = 0,
         random_seed: int = 42,
 ) -> None:
     print(
         100 * "-"
         + "\n"
         + "Welcome in the approximation quality experiment for CIFAR-10. \n"
-          f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
+          f"Settings: random_seed = {random_seed} "
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -128,9 +126,9 @@ def approximation_quality(
     classifier2.to(device)
     classifier2.eval()
 
-    with open('./experiments/results/cifar/outlier/simplex_t2_cv0.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/outlier/simplex.pkl', 'rb') as f:
         data_base = pkl.load(f)
-    with open('./experiments/results/cifar/outlier_sn/simplex_t2_cv0.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/outlier_sn/simplex.pkl', 'rb') as f:
         data_sn = pkl.load(f)
 
     # Load the explainer
@@ -161,20 +159,20 @@ def approximation_quality(
         f"SN latent r2: {latent_r2_score:.2g} ; base output r2 = {output_r2_score:.2g}."
     )
 
+
 def ood_detection(
-        cv: int = 0,
+        ood: str = "CIFAR100",
         random_seed: int = 42,
         save_path: str = "experiments/results/cifar/ood/",
         train: bool = False,
 ) -> None:
-    torch.random.manual_seed(random_seed + cv)
+    torch.random.manual_seed(random_seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     n_epoch_simplex = 10000
-    K = 5
 
     print(
         100 * "-" + "\n" + "Welcome in the outlier detection experiment for CIFAR10. \n"
-                           f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
+                           f"Settings: random_seed = {random_seed} ; ood = {ood}.\n" + 100 * "-"
     )
     current_path = Path.cwd()
     print(current_path)
@@ -186,11 +184,8 @@ def ood_detection(
         print(f"Creating the saving directory {save_path}")
         os.makedirs(save_path)
 
-    # Training a model, save it
-    # if train:
-
-
     # Load the model
+    # Classifier1 is wide-resnet28-10
     save_path1 = current_path / "experiments/results/cifar/ood/"
     classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
     new_state_dict = {}
@@ -205,6 +200,7 @@ def ood_detection(
     classifier1.load_state_dict(state_dict)
     classifier1.to(device)
     classifier1.eval()
+    # Classifier2 is wide-resnet28-10 with  spectral normalization
     save_path2 = current_path / "experiments/results/cifar/ood_sn/"
     new_state_dict = {}
     state_dict = torch.load(
@@ -223,8 +219,7 @@ def ood_detection(
     # Load data:
     corpus_loader = load_cifar10(batch_size=1000, train=True)
     cifar10_test_loader = load_cifar10(batch_size=1000, train=False)
-    cifar100_test_loader = load_cifar100(batch_size=1000, train=False)
-    svhn_test_loader = load_svhn(batch_size=1000, split="test")
+
     corpus_latent_reps1 = []
     corpus_latent_reps2 = []
     corpus_features = []
@@ -248,85 +243,71 @@ def ood_detection(
     cifar10_test_features = torch.cat(cifar10_test_features, dim=0).to(device).detach()
     cifar10_test_latent_reps1 = torch.cat(cifar10_test_latent_reps1, dim=0).to(device).detach()
     cifar10_test_latent_reps2 = torch.cat(cifar10_test_latent_reps2, dim=0).to(device).detach()
-
-    # cifar100_test_features = []
-    # cifar100_test_latent_reps1 = []
-    # cifar100_test_latent_reps2 = []
-    # for i, (cifar100_test_feature, _) in enumerate(cifar100_test_loader):
-    #     cifar100_test_features.append(cifar100_test_feature)
-    #     cifar100_test_latent_reps1.append(
-    #         classifier1.latent_representation(cifar100_test_feature.to(device).detach()).detach())
-    #     cifar100_test_latent_reps2.append(
-    #         classifier2.latent_representation(cifar100_test_feature.to(device).detach()).detach())
-    # cifar100_test_features = torch.cat(cifar100_test_features, dim=0).to(device).detach()
-    # cifar100_test_latent_reps1 = torch.cat(cifar100_test_latent_reps1, dim=0).to(device).detach()
-    # cifar100_test_latent_reps2 = torch.cat(cifar100_test_latent_reps2, dim=0).to(device).detach()
-
-    svhn_test_features = []
-    svhn_test_latent_reps1 = []
-    svhn_test_latent_reps2 = []
-    for i, (svhn_test_feature, _) in enumerate(svhn_test_loader):
-        svhn_test_features.append(svhn_test_feature)
-        svhn_test_latent_reps1.append(
-            classifier1.latent_representation(svhn_test_feature.to(device).detach()).detach())
-        svhn_test_latent_reps2.append(
-            classifier2.latent_representation(svhn_test_feature.to(device).detach()).detach())
-    svhn_test_features = torch.cat(svhn_test_features, dim=0).to(device).detach()
-    svhn_test_latent_reps1 = torch.cat(svhn_test_latent_reps1, dim=0).to(device).detach()
-    svhn_test_latent_reps2 = torch.cat(svhn_test_latent_reps2, dim=0).to(device).detach()
-
-    # test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, cifar100_test_latent_reps1], dim=0)
-    # test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, cifar100_test_latent_reps2], dim=0)
-    # test_features = torch.cat([cifar10_test_features, cifar100_test_features], dim=0)
-
-    test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, svhn_test_latent_reps1], dim=0)
-    test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, svhn_test_latent_reps2], dim=0)
-    test_features = torch.cat([cifar10_test_features, svhn_test_features], dim=0)
+    if ood == "CIFAR100":
+        ood_test_loader = load_cifar100(batch_size=1000, train=False)
+    elif ood == "SVHN":
+        ood_test_loader = load_svhn(batch_size=1000, split="test")
+    else:
+        print("Dataset name is not correct")
+    ood_test_features = []
+    ood_test_latent_reps1 = []
+    ood_test_latent_reps2 = []
+    for i, (ood_test_feature, _) in enumerate(ood_test_loader):
+        ood_test_features.append(ood_test_feature)
+        ood_test_latent_reps1.append(
+            classifier1.latent_representation(ood_test_feature.to(device).detach()).detach())
+        ood_test_latent_reps2.append(
+            classifier2.latent_representation(ood_test_feature.to(device).detach()).detach())
+    ood_test_features = torch.cat(ood_test_features, dim=0).to(device).detach()
+    ood_test_latent_reps1 = torch.cat(ood_test_latent_reps1, dim=0).to(device).detach()
+    ood_test_latent_reps2 = torch.cat(ood_test_latent_reps2, dim=0).to(device).detach()
+    test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, ood_test_latent_reps1], dim=0)
+    test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, ood_test_latent_reps2], dim=0)
+    test_features = torch.cat([cifar10_test_features, ood_test_features], dim=0)
 
     # Fit corpus:
+    # SimplEx1 is  for SimplEx fit to the normal wide-resnet
     simplex1 = Simplex(
         corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps1
     )
     simplex1.fit(
         test_examples=test_features,
-        test_latent_reps=test_latent_reps1[10000:],
+        test_latent_reps=test_latent_reps1,
         n_epoch=n_epoch_simplex,
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path1 / f"simplex_svhn2_t2_cv{cv}.pkl"
+    explainer_path = save_path1 / f"simplex_ood{ood}.pkl"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex1, f)
-
+    # SimplEx2 is  for SimplEx fit to the distance-aware wide-resnet
     simplex2 = Simplex(
         corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps2
     )
     simplex2.fit(
         test_examples=test_features,
-        test_latent_reps=test_latent_reps2[10000:],
+        test_latent_reps=test_latent_reps2,
         n_epoch=n_epoch_simplex,
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path2 / f"simplex_svhn2_t2_cv{cv}.pkl"
+    explainer_path = save_path2 / f"simplex_ood{ood}.pkl"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex2, f)
 
 
-
-
-def main(experiment: str, cv: int) -> None:
+def main(experiment: str, ood_dataset: str) -> None:
     if experiment == "approximation_quality":
-        approximation_quality(cv=cv)
+        approximation_quality()
     elif experiment == "ood_detection":
-        ood_detection(cv)
+        ood_detection(ood=ood_dataset)
     else:
         raise ValueError(
             "The name of the experiment is not valid. "
             "Valid names are: "
-            "approximation_quality , outlier_detection , jacobian_corruption, influence, timing."
+            "approximation_quality , ood_detection."
         )
 
 
@@ -338,6 +319,7 @@ if __name__ == "__main__":
         default="approximation_quality",
         help="Experiment to perform",
     )
-    parser.add_argument("-cv", type=int, default=0, help="Cross validation parameter")
+    parser.add_argument('--ood_dataset', type=str, default='cifar100',
+                        choices=['cifar100', 'svhn'], help='dataset')
     args = parser.parse_args()
-    main(args.experiment, args.cv)
+    main(args.experiment, args.ood_dataset)
