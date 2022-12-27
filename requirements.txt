@@ -1,0 +1,14 @@
+captum==0.5.0
+matplotlib==3.5.2
+numpy==1.23.1
+ood_metrics==0.2.9
+pandas==1.4.3
+pytorch_influence_functions==0.1.1
+pytorch_lightning==1.6.5
+ray==2.1.0
+scikit_learn==1.2.0
+seaborn==0.11.2
+simplexai==0.0.2
+torch==1.12.1+cu116
+torchmetrics==0.9.3
+torchvision==0.13.1+cu116

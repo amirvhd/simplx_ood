@@ -2,7 +2,6 @@ import pytorch_lightning as pl
 import torch.nn as nn
 import torch
 from torchmetrics.functional import auroc, accuracy
-from torchvision.models import resnet50
 from models.new_model import WideResNet
 
 
@@ -99,37 +98,15 @@ class classifier_module(pl.LightningModule):
 
         self.log("test_acc", acc, prog_bar=True, logger=True)
 
-
-    def predict_step(self, batch, batch_idx, dataloader_idx=0):
-        x, y = batch
-        y_hat = self.forward(x)
-        return {"predictions":y_hat}
-
-    def predict_epoch_end(self, outputs):
-
-        predictions = []
-        for output in outputs:
-            predictions.append(output["predictions"].detach().cpu())
-
-        predictions = torch.stack(predictions)
-        probs = torch.nn.functional.softmax(predictions, dim=-1)
-        self.results = torch.max(probs, dim=-1).values.cpu().numpy()
-
-
     def configure_optimizers(self):
         # optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, weight_decay=self.weight_decay)
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate, momentum=0.9,
                                     weight_decay=self.weight_decay)
-        # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 30)
-        # scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, 1)
-        milestones = [60, 120, 160]
 
-        # scheduler = torch.optim.lr_scheduler.MultiStepLR(
-        #     optimizer, milestones=milestones, gamma=0.2
-        # )
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.9, patience=5, min_lr=1e-5)
         return {"optimizer": optimizer,
                 "lr_scheduler": scheduler,
                 "monitor": "val_loss"}
+
     def get_results(self):
         return self.results

@@ -26,30 +26,19 @@ class cifar10_module(pl.LightningDataModule):
             transforms.ToTensor(),
             normalize
         ])
-        mean = (0.5071, 0.4867, 0.4408)
-        std = (0.2675, 0.2565, 0.2761)
-        normalize = transforms.Normalize(mean=mean, std=std)
-        self.data_transform_predict = transforms.Compose([
-            transforms.ToTensor(),
-            normalize
-        ])
 
     def setup(self, stage=None):
         train_dataset = datasets.CIFAR10(root=self.data_dir, train=True, download=True,
                                          transform=self.data_transform_train)
         if stage == "fit" or stage is None:
-            # self.train, self.val = random_split(train_dataset, [int(0.8 * len(train_dataset)),
-            #                                                     len(train_dataset) - int(0.8 * len(train_dataset))])
+            self.train, self.val = random_split(train_dataset, [int(0.9 * len(train_dataset)),
+                                                                len(train_dataset) - int(0.9 * len(train_dataset))])
             self.train = train_dataset
             self.val = datasets.CIFAR10(root=self.data_dir, train=False, download=True,
                                         transform=self.data_transform_test)
         if stage == "test" or stage is None:
             self.test_dataset = datasets.CIFAR10(root=self.data_dir, train=False, download=True,
-                                         transform=self.data_transform_test)
-
-        if stage == "predict" or stage is None:
-            self.predict_dataset = datasets.CIFAR100(root=self.data_dir, train=False, download=True,
-                                                     transform=self.data_transform_predict)
+                                                 transform=self.data_transform_test)
 
     def train_dataloader(self):
         return DataLoader(
@@ -69,13 +58,6 @@ class cifar10_module(pl.LightningDataModule):
     def test_dataloader(self):
         return DataLoader(
             self.test_dataset,
-            batch_size=self.batch_size,
-            num_workers=self.n_workers
-        )
-
-    def predict_dataloader(self):
-        return DataLoader(
-            self.predict_dataset,
             batch_size=self.batch_size,
             num_workers=self.n_workers
         )
