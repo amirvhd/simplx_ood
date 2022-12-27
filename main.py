@@ -22,7 +22,7 @@ def load_svhn(
     mean = (0.4376821, 0.4437697, 0.47280442)
     std = (0.19803012, 0.20101562, 0.19703614)
     dataset = torchvision.datasets.SVHN(
-        "~/DATA2/",
+        "./data",
         split=split,
         download=False,
         transform=torchvision.transforms.Compose(
@@ -45,7 +45,7 @@ def load_cifar10(
     mean = (0.4914, 0.4822, 0.4465)
     std = (0.2023, 0.1994, 0.2010)
     dataset = torchvision.datasets.CIFAR10(
-        "~/DATA2/",
+        "./data",
         train=train,
         download=False,
         transform=torchvision.transforms.Compose(
@@ -68,7 +68,7 @@ def load_cifar100(
     mean = (0.5071, 0.4867, 0.4408)
     std = (0.2675, 0.2565, 0.2761)
     dataset = torchvision.datasets.CIFAR100(
-        "~/DATA2/",
+        "./data",
         train,
         download=False,
         transform=torchvision.transforms.Compose(
@@ -127,9 +127,9 @@ def approximation_quality(
     classifier2.to(device)
     classifier2.eval()
 
-    with open('./experiments/results/cifar/outlier/simplex.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/ood/simplex_ood_cifar100.pkl', 'rb') as f:
         data_base = pkl.load(f)
-    with open('./experiments/results/cifar/outlier_sn/simplex.pkl', 'rb') as f:
+    with open('./experiments/results/cifar/ood_sn/simplex_ood_cifar100.pkl', 'rb') as f:
         data_sn = pkl.load(f)
 
     # Load the explainer
@@ -244,9 +244,9 @@ def ood_detection(
     cifar10_test_features = torch.cat(cifar10_test_features, dim=0).to(device).detach()
     cifar10_test_latent_reps1 = torch.cat(cifar10_test_latent_reps1, dim=0).to(device).detach()
     cifar10_test_latent_reps2 = torch.cat(cifar10_test_latent_reps2, dim=0).to(device).detach()
-    if ood == "CIFAR100":
+    if ood == "cifar100":
         ood_test_loader = load_cifar100(batch_size=1000, train=False)
-    elif ood == "SVHN":
+    elif ood == "svhn":
         ood_test_loader = load_svhn(batch_size=1000, split="test")
     else:
         print("Dataset name is not correct")
@@ -278,7 +278,7 @@ def ood_detection(
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path1 / f"simplex_ood{ood}.pkl"
+    explainer_path = save_path1 / f"simplex_ood_{ood}.pkl"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex1, f)
@@ -293,7 +293,7 @@ def ood_detection(
         reg_factor=0,
         n_keep=corpus_features.shape[0],
     )
-    explainer_path = save_path2 / f"simplex_ood{ood}.pkl"
+    explainer_path = save_path2 / f"simplex_ood_{ood}.pkl"
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex2, f)

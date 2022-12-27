@@ -3,6 +3,7 @@ import pickle as pkl
 import matplotlib.pyplot as plt
 import argparse
 
+
 def parse_option():
     parser = argparse.ArgumentParser('argument for training')
     parser.add_argument('--ood_dataset', type=str, default='cifar100',
@@ -11,33 +12,23 @@ def parse_option():
     opt = parser.parse_args()
     return opt
 
+
 def main():
-    with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
-        data_base = pkl.load(f)
-    with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
-        data_sn = pkl.load(f)
+    opt = parse_option()
+    if opt.ood_dataset == 'cifar100':
+        with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
+            data_base = pkl.load(f)
+        with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
+            data_sn = pkl.load(f)
+    if opt.ood_dataset == 'svhn':
+        with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
+            data_base = pkl.load(f)
+        with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
+            data_sn = pkl.load(f)
     pred_base = data_base.latent_approx()
     error_base = ((data_base.test_latent_reps - pred_base) ** 2).sum(1).cpu().numpy()
     pred_sn = data_sn.latent_approx()
     error_sn = ((data_sn.test_latent_reps - pred_sn) ** 2).sum(1).cpu().numpy()
-    # with open('./experiments/results/cifar/outlier/simplex_svhn1_cv0.pkl', 'rb') as f:
-    #     data_base1 = pkl.load(f)
-    # with open('./experiments/results/cifar/outlier_sn/simplex_svhn1_cv0.pkl', 'rb') as f:
-    #     data_sn1 = pkl.load(f)
-    # with open('./experiments/results/cifar/outlier/simplex_svhn2_cv0.pkl', 'rb') as f:
-    #     data_base2 = pkl.load(f)
-    # with open('./experiments/results/cifar/outlier_sn/simplex_svhn2_cv0.pkl', 'rb') as f:
-    #     data_sn2 = pkl.load(f)
-    # pred_base1 = data_base1.latent_approx()
-    # error_base1 = ((data_base1.test_latent_reps - pred_base1) ** 2).sum(1).cpu().numpy()
-    # pred_sn1 = data_sn1.latent_approx()
-    # error_sn1 = ((data_sn1.test_latent_reps - pred_sn1) ** 2).sum(1).cpu().numpy()
-    # pred_base2 = data_base2.latent_approx()
-    # error_base2 = ((data_base2.test_latent_reps - pred_base2) ** 2).sum(1).cpu().numpy()
-    # pred_sn2 = data_sn2.latent_approx()
-    # error_sn2 = ((data_sn2.test_latent_reps - pred_sn2) ** 2).sum(1).cpu().numpy()
-    # error_base = numpy.concatenate((error_base1, error_base2), axis=0)
-    # error_sn = numpy.concatenate((error_sn1, error_sn2), axis=0)
 
     sorted_error_base = numpy.flip(numpy.argsort(error_base))
     sorted_error_base[sorted_error_base <= 10000] = 0
@@ -48,8 +39,10 @@ def main():
 
     cumulative = numpy.cumsum(sorted_error_base)
     cumulative2 = numpy.cumsum(sorted_error_sn)
+    # random
     x = numpy.random.randint(2, size=20000)
     cumulative3 = numpy.cumsum(x)
+    # Best case
     x_best = numpy.zeros(20000)
     x_best[:10000] = 1
     cumulative4 = numpy.cumsum(x_best)
@@ -60,8 +53,7 @@ def main():
     plt.xlabel("Number of images inspected")
     plt.ylabel("Number of CIFAR-100 detected")
     plt.legend(loc="lower right")
-    plt.savefig('CIFAR_cifar10.pdf', format = "pdf")
-
+    plt.savefig('ood.pdf', format="pdf")
 
 
 if __name__ == "__main__":
