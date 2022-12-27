@@ -1,7 +1,6 @@
 import os
 import argparse
 
-
 from Dataloader.cifar_datamodule import cifar10_module
 from Trainer.cifar10_trainer import classifier_module
 import torch
@@ -31,7 +30,10 @@ def parse_option():
                         help='number of workers')
     parser.add_argument('--n_freeze_layers', type=int, default=0,
                         help='number of layers that are frozen')
-
+    parser.add_argument('--sn', action='store_true',
+                        help='using spectral normalize layers')
+    parser.add_argument('--bn', action='store_true',
+                        help='using spectral normalize batch normalization')
     opt = parser.parse_args()
 
     # set the path according to the environment
@@ -51,7 +53,7 @@ def main():
                                  )
     # import trainer
     model = classifier_module(
-        n_classes=opt.n_cls, lr=opt.lr, wd=opt.wd, n_layers=opt.n_freeze_layers
+        n_classes=opt.n_cls, lr=opt.lr, wd=opt.wd, n_layers=opt.n_freeze_layers, bn=opt.bn, sn=opt.sn
     )
 
     # callbacks definitions
@@ -72,7 +74,7 @@ def main():
     # training
     trainer = pl.Trainer(
         logger=logger,
-        callbacks=[checkpoint_callback,early_stopping_callback, TQDMProgressBar(refresh_rate=30)],
+        callbacks=[checkpoint_callback, early_stopping_callback, TQDMProgressBar(refresh_rate=30)],
         max_epochs=opt.epochs,
         strategy="ddp_find_unused_parameters_false",
         gpus=n_gpus

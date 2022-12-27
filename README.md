@@ -45,33 +45,27 @@ pip install - r requirements.txt
 
 ### Image classification
 
-Use the Berttopic modeling for a custom dataset. Since the Berttopic has its own tokenizer, the tokenizer function in
-preprocess class is commented out.
+To run the CIFAR10 base line imgae classification you need to run the following :
 
 ```python
-python train.py
+python train.py --bn --sn
 ``` 
 
 ### Approximation quality
 
-You can find the preprocessing class in Topic modeling/Utils. To use this class:
+You can run the following code to get results for precision fo corpus decomposition for trained model from previous step.
 
 ```python
 python main.py -experiment approximation_quality
 ``` 
 
-The preprocessing class contains 7 features:
 
 
 
 
 ### Out of distribution detection
 
-This project uses Bert model as encoder and add a linear to the model for Multi-label classification for the
-
-
-- ToxicCommentDataset class :  a custom dataset class that inherit torch Dataset for Toxic-comment dataset.
-
+You can run the following codes to get fitted simplEx for out-of-distribution detection for CIFAR100 and SVHN.
 
 
 ```python
@@ -79,7 +73,13 @@ python main.py -experiment ood_detection --ood_dataset CIFAR100
 python main.py -experiment ood_detection --ood_dataset SVHN
 
 ```
+To get errors and plots for out-of-ditribtuionn detection. you can run the follwoing code
 
+```python
+python plot.py  --ood_dataset CIFAR100
+python plot.py --ood_dataset SVHN
+
+```
 
 ## Acknowledgements
 

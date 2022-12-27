@@ -7,7 +7,7 @@ from models.new_model import WideResNet
 
 class classifier_module(pl.LightningModule):
 
-    def __init__(self, n_classes=10, lr=5e-1, wd=0, n_layers=0, drop=0.3, **kwargs):
+    def __init__(self, n_classes=10, lr=5e-1, wd=0, n_layers=0, drop=0.3, bn=False, sn=False, **kwargs):
         super().__init__()
         self.learning_rate = lr
         self.weight_decay = wd
@@ -15,7 +15,7 @@ class classifier_module(pl.LightningModule):
         self.num_freeze_layers = n_layers
         self.drop = drop
         self.results = None
-        self.model = WideResNet(dropout_rate=self.drop)
+        self.model = WideResNet(dropout_rate=self.drop, spectral_bn=bn, spectral_conv=sn)
         self.criterion = nn.CrossEntropyLoss()
 
     def forward(self, images):
