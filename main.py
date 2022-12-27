@@ -220,7 +220,7 @@ def ood_detection(
     # Load data:
     corpus_loader = load_cifar10(batch_size=1000, train=True)
     cifar10_test_loader = load_cifar10(batch_size=1000, train=False)
-
+    # find corpus features
     corpus_latent_reps1 = []
     corpus_latent_reps2 = []
     corpus_features = []
@@ -231,7 +231,7 @@ def ood_detection(
     corpus_features = torch.cat(corpus_features, dim=0).to(device).detach()
     corpus_latent_reps1 = torch.cat(corpus_latent_reps1, dim=0).to(device).detach()
     corpus_latent_reps2 = torch.cat(corpus_latent_reps2, dim=0).to(device).detach()
-
+    # find features for cifar10 test set
     cifar10_test_features = []
     cifar10_test_latent_reps1 = []
     cifar10_test_latent_reps2 = []
@@ -250,6 +250,7 @@ def ood_detection(
         ood_test_loader = load_svhn(batch_size=1000, split="test")
     else:
         print("Dataset name is not correct")
+    # find features for ood data test set
     ood_test_features = []
     ood_test_latent_reps1 = []
     ood_test_latent_reps2 = []
@@ -265,9 +266,9 @@ def ood_detection(
     test_latent_reps1 = torch.cat([cifar10_test_latent_reps1, ood_test_latent_reps1], dim=0)
     test_latent_reps2 = torch.cat([cifar10_test_latent_reps2, ood_test_latent_reps2], dim=0)
     test_features = torch.cat([cifar10_test_features, ood_test_features], dim=0)
-
+    # First 10000 of results are for cifar10 test and after that it is for ood data
     # Fit corpus:
-    # SimplEx1 is  for SimplEx fit to the normal wide-resnet
+    # Simplex1 is  for SimplEx fit to the normal wide-resnet
     simplex1 = Simplex(
         corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps1
     )
@@ -282,7 +283,7 @@ def ood_detection(
     with open(explainer_path, "wb") as f:
         print(f"Saving simplex decomposition in {explainer_path}.")
         pkl.dump(simplex1, f)
-    # SimplEx2 is  for SimplEx fit to the distance-aware wide-resnet
+    # Simplex2 is  for SimplEx fit to the distance-aware wide-resnet
     simplex2 = Simplex(
         corpus_examples=corpus_features, corpus_latent_reps=corpus_latent_reps2
     )
