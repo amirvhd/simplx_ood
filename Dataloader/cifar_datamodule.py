@@ -6,7 +6,7 @@ import torchvision.transforms as transforms
 
 class cifar10_module(pl.LightningDataModule):
 
-    def __init__(self, data_dir='~/DATA2/', batch_size=8, n_workers=2):
+    def __init__(self, data_dir='./data', batch_size=8, n_workers=2):
         super().__init__()
         self.data_dir = data_dir
         self.n_workers = n_workers
