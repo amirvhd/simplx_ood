@@ -69,15 +69,15 @@ You can run the following codes to fit SimplEx for out-of-distribution detection
 
 
 ```python
-python main.py -experiment ood_detection --ood_dataset CIFAR100
-python main.py -experiment ood_detection --ood_dataset SVHN
+python main.py -experiment ood_detection --ood_dataset cifar100
+python main.py -experiment ood_detection --ood_dataset svhn
 
 ```
 To get errors and plots for out-of-distribution detection. you can run the following code:
 
 ```python
-python plot.py  --ood_dataset CIFAR100
-python plot.py --ood_dataset SVHN
+python plot.py  --ood_dataset cifar100
+python plot.py --ood_dataset svhn
 
 ```
 
