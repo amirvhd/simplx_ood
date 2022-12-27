@@ -172,7 +172,7 @@ def ood_detection(
 
     print(
         100 * "-" + "\n" + "Welcome in the outlier detection experiment for CIFAR10. \n"
-                           f"Settings: random_seed = {random_seed} ; ood = {ood}.\n" + 100 * "-"
+                           f"Settings: random_seed = {random_seed} ; ood = {ood}.\n"
     )
     current_path = Path.cwd()
     print(current_path)
@@ -190,7 +190,7 @@ def ood_detection(
     classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v1.ckpt"),
+        os.path.join(save_path1, "best-checkpoint-v1.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
@@ -204,7 +204,7 @@ def ood_detection(
     save_path2 = current_path / "experiments/results/cifar/ood_sn/"
     new_state_dict = {}
     state_dict = torch.load(
-        os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v2.ckpt"),
+        os.path.join(save_path2, "best-checkpoint-v2.ckpt"),
         map_location=torch.device('cpu'))[
         "state_dict"]
     for k, v in state_dict.items():
