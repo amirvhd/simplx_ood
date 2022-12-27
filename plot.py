@@ -16,11 +16,15 @@ def parse_option():
 def main():
     opt = parse_option()
     if opt.ood_dataset == 'cifar100':
+        n1 = 10000
+        n2 = 20000
         with open('./experiments/results/cifar/ood/simplex_ood_cifar100.pkl', 'rb') as f:
             data_base = pkl.load(f)
         with open('./experiments/results/cifar/ood_sn/simplex_ood_cifar100.pkl', 'rb') as f:
             data_sn = pkl.load(f)
     if opt.ood_dataset == 'svhn':
+        n1 = 26032
+        n2 = 36032
         with open('./experiments/results/cifar/ood/simplex_ood_svhn.pkl', 'rb') as f:
             data_base = pkl.load(f)
         with open('./experiments/results/cifar/ood_sn/simplex_ood_svhn.pkl', 'rb') as f:
@@ -31,20 +35,20 @@ def main():
     error_sn = ((data_sn.test_latent_reps - pred_sn) ** 2).sum(1).cpu().numpy()
 
     sorted_error_base = numpy.flip(numpy.argsort(error_base))
-    sorted_error_base[sorted_error_base <= 10000] = 0
-    sorted_error_base[sorted_error_base > 10000] = 1
+    sorted_error_base[sorted_error_base <= n1] = 0
+    sorted_error_base[sorted_error_base > n1] = 1
     sorted_error_sn = numpy.flip(numpy.argsort(error_sn))
-    sorted_error_sn[sorted_error_sn <= 10000] = 0
-    sorted_error_sn[sorted_error_sn > 10000] = 1
+    sorted_error_sn[sorted_error_sn <= n1] = 0
+    sorted_error_sn[sorted_error_sn > n1] = 1
 
     cumulative = numpy.cumsum(sorted_error_base)
     cumulative2 = numpy.cumsum(sorted_error_sn)
     # random
-    x = numpy.random.randint(2, size=20000)
+    x = numpy.random.randint(2, size=n2)
     cumulative3 = numpy.cumsum(x)
     # Best case
-    x_best = numpy.zeros(20000)
-    x_best[:10000] = 1
+    x_best = numpy.zeros(n2)
+    x_best[:n1] = 1
     cumulative4 = numpy.cumsum(x_best)
     plt.plot(cumulative, c='blue', label="Base model")
     plt.plot(cumulative2, c='green', label="Model with spectral normalization")
