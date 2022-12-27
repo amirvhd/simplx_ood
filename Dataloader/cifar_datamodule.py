@@ -33,9 +33,7 @@ class cifar10_module(pl.LightningDataModule):
         if stage == "fit" or stage is None:
             self.train, self.val = random_split(train_dataset, [int(0.9 * len(train_dataset)),
                                                                 len(train_dataset) - int(0.9 * len(train_dataset))])
-            self.train = train_dataset
-            self.val = datasets.CIFAR10(root=self.data_dir, train=False, download=True,
-                                        transform=self.data_transform_test)
+
         if stage == "test" or stage is None:
             self.test_dataset = datasets.CIFAR10(root=self.data_dir, train=False, download=True,
                                                  transform=self.data_transform_test)
