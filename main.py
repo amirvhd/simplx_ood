@@ -161,10 +161,10 @@ def approximation_quality(
         f"SN latent r2: {latent_r2_score:.2g} ; base output r2 = {output_r2_score:.2g}."
     )
 
-def outlier_detection(
+def ood_detection(
         cv: int = 0,
         random_seed: int = 42,
-        save_path: str = "experiments/results/cifar/outlier/",
+        save_path: str = "experiments/results/cifar/ood/",
         train: bool = False,
 ) -> None:
     torch.random.manual_seed(random_seed + cv)
@@ -173,7 +173,7 @@ def outlier_detection(
     K = 5
 
     print(
-        100 * "-" + "\n" + "Welcome in the outlier detection experiment for MNIST. \n"
+        100 * "-" + "\n" + "Welcome in the outlier detection experiment for CIFAR10. \n"
                            f"Settings: random_seed = {random_seed} ; cv = {cv}.\n" + 100 * "-"
     )
     current_path = Path.cwd()
@@ -191,7 +191,7 @@ def outlier_detection(
 
 
     # Load the model
-    save_path1 = current_path / "experiments/results/cifar/outlier/"
+    save_path1 = current_path / "experiments/results/cifar/ood/"
     classifier1 = WideResNet(spectral_conv=False, spectral_bn=False)
     new_state_dict = {}
     state_dict = torch.load(
@@ -205,7 +205,7 @@ def outlier_detection(
     classifier1.load_state_dict(state_dict)
     classifier1.to(device)
     classifier1.eval()
-    save_path2 = current_path / "experiments/results/cifar/outlier_sn/"
+    save_path2 = current_path / "experiments/results/cifar/ood_sn/"
     new_state_dict = {}
     state_dict = torch.load(
         os.path.join("/dss/dssmcmlfs01/pn69za/pn69za-dss-0002/ra49bid2/saved_models/BERD/", "best-checkpoint-v2.ckpt"),
@@ -320,8 +320,8 @@ def outlier_detection(
 def main(experiment: str, cv: int) -> None:
     if experiment == "approximation_quality":
         approximation_quality(cv=cv)
-    elif experiment == "outlier_detection":
-        outlier_detection(cv)
+    elif experiment == "ood_detection":
+        ood_detection(cv)
     else:
         raise ValueError(
             "The name of the experiment is not valid. "
