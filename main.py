@@ -87,7 +87,7 @@ def load_cifar100(
 
 def approximation_quality(
         random_seed: int = 42,
-        model_path: str = "experiments/results/"
+        model_path: str = "/experiments/results/"
 ) -> None:
     print(
         100 * "-"

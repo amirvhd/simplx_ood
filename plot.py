@@ -16,14 +16,14 @@ def parse_option():
 def main():
     opt = parse_option()
     if opt.ood_dataset == 'cifar100':
-        with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
+        with open('./experiments/results/cifar/ood/simplex_ood_cifar100.pkl', 'rb') as f:
             data_base = pkl.load(f)
-        with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
+        with open('./experiments/results/cifar/ood_sn/simplex_ood_cifar100.pkl', 'rb') as f:
             data_sn = pkl.load(f)
     if opt.ood_dataset == 'svhn':
-        with open('./experiments/results/cifar/outlier/simplex_cv0.pkl', 'rb') as f:
+        with open('./experiments/results/cifar/ood/simplex_ood_svhn.pkl', 'rb') as f:
             data_base = pkl.load(f)
-        with open('./experiments/results/cifar/outlier_sn/simplex_cv0.pkl', 'rb') as f:
+        with open('./experiments/results/cifar/ood_sn/simplex_ood_svhn.pkl', 'rb') as f:
             data_sn = pkl.load(f)
     pred_base = data_base.latent_approx()
     error_base = ((data_base.test_latent_reps - pred_base) ** 2).sum(1).cpu().numpy()
@@ -51,7 +51,7 @@ def main():
     plt.plot(cumulative3, c='grey', label="Random")
     plt.plot(cumulative4, c='brown', label="Maximal")
     plt.xlabel("Number of images inspected")
-    plt.ylabel("Number of CIFAR-100 detected")
+    plt.ylabel(f"Number of {opt.ood_dataset} detected")
     plt.legend(loc="lower right")
     plt.savefig('ood.pdf', format="pdf")
 

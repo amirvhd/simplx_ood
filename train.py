@@ -38,7 +38,7 @@ def parse_option():
 
     # set the path according to the environment
 
-    opt.model_path = './model'
+    opt.model_path = '/experiments/results/'
     if not os.path.isdir(opt.model_path):
         os.makedirs(opt.model_path)
     return opt
